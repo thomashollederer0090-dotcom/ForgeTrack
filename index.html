@@ -685,6 +685,284 @@
       .prog-ex-name { font-size: 13px; }
       .app { padding-left: 12px; padding-right: 12px; }
     }
+
+    /* ════════════════════════════════════════
+       FEATURE 1 — EXERCISE DRAG & DROP
+    ════════════════════════════════════════ */
+    .ex-card-inner { display: flex; align-items: flex-start; }
+    .ex-card-content { flex: 1; min-width: 0; }
+    .drag-handle {
+      cursor: grab;
+      color: var(--text-muted);
+      font-size: 16px;
+      line-height: 1;
+      user-select: none;
+      flex-shrink: 0;
+      padding: 2px 8px 0 0;
+      display: flex;
+      align-items: flex-start;
+      padding-top: 14px;
+    }
+    .drag-handle:active { cursor: grabbing; }
+    .ex-card.dragging { opacity: 0.4; border-color: var(--accent); box-shadow: var(--accent-glow); }
+    .ex-card.drag-over { border-color: var(--accent); border-style: dashed; }
+
+    /* ════════════════════════════════════════
+       FEATURE 2 — PROGRESS FILTER BAR
+    ════════════════════════════════════════ */
+    .prog-filter-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      align-items: stretch;
+    }
+    .prog-filter-bar input[type="text"] { flex: 1 1 120px; min-width: 0; }
+    .prog-filter-bar select { flex: 0 1 auto; }
+
+    /* ════════════════════════════════════════
+       FEATURE 3 — UNUSED BADGE / REMOVE
+    ════════════════════════════════════════ */
+    .prog-card-header { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+    .unused-badge {
+      background: rgba(249,115,22,0.12);
+      border: 1px solid rgba(249,115,22,0.35);
+      border-radius: 20px;
+      color: var(--accent);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      padding: 2px 9px;
+    }
+    .btn-remove-global { font-size: 11px; padding: 5px 10px; }
+
+    /* ════════════════════════════════════════
+       FEATURE 4 — GOALS VIEW
+    ════════════════════════════════════════ */
+    .goals-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    /* Goal card */
+    .goal-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 16px;
+      margin-bottom: 12px;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .goal-card.complete { border-color: var(--success); box-shadow: 0 0 12px rgba(34,197,94,0.15); }
+    .goal-card.goal-dragging { opacity: 0.4; border-color: var(--accent); box-shadow: var(--accent-glow); }
+    .goal-card.goal-drag-over { border-color: var(--accent); border-style: dashed; }
+
+    .goal-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      gap: 8px;
+    }
+    .goal-card-title-wrap { flex: 1; }
+    .goal-card-title { font-weight: 600; font-size: 14px; color: var(--text-primary); }
+    .goal-type-badge { font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+    .goal-card-actions { display: flex; align-items: center; gap: 4px; }
+    .goal-drag-handle {
+      cursor: grab;
+      color: var(--text-muted);
+      font-size: 16px;
+      user-select: none;
+      padding: 2px 0 2px 4px;
+      line-height: 1;
+    }
+    .goal-drag-handle:active { cursor: grabbing; }
+
+    /* Water */
+    .cups-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+    .cup {
+      width: 38px; height: 44px;
+      background: #0d0d0d;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      transition: background var(--transition), border-color var(--transition);
+      touch-action: manipulation;
+    }
+    .cup.filled { background: var(--accent-bg); border-color: var(--accent); }
+
+    /* Progress bar */
+    .progress-bar-wrap {
+      background: #0d0d0d;
+      border-radius: 4px;
+      height: 7px;
+      overflow: hidden;
+      margin-bottom: 5px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+    .progress-bar-fill.complete { background: var(--success); }
+    .progress-lbl { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); }
+
+    /* Steps */
+    .steps-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .steps-row input { flex: 1; }
+    .steps-row .step-unit { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+
+    /* Ring (meditation / study) */
+    .ring-wrap { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+    .ring-svg { transform: rotate(-90deg); flex-shrink: 0; }
+    .ring-center { display: flex; flex-direction: column; gap: 3px; }
+    .ring-val { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 600; color: var(--text-primary); }
+    .ring-sub { font-size: 11px; color: var(--text-muted); }
+    .add-mins-row { display: flex; gap: 6px; }
+    .add-mins-row button { flex: 1; }
+
+    /* Macros */
+    .macro-bars { margin-bottom: 10px; }
+    .macro-bar-row { margin-bottom: 6px; }
+    .macro-bar-label-row {
+      display: flex; justify-content: space-between;
+      font-size: 11px; margin-bottom: 3px;
+    }
+    .macro-bar-name { color: var(--text-secondary); font-weight: 500; }
+    .macro-bar-val { font-family: 'JetBrains Mono', monospace; color: var(--text-muted); }
+    .macro-inputs-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .macro-input-col label {
+      display: block;
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+
+    /* Custom */
+    .custom-done-btn {
+      width: 100%;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+      border-radius: var(--radius-input);
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all var(--transition);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      background: #0d0d0d;
+      touch-action: manipulation;
+    }
+    .custom-done-btn.done { border-color: var(--success); color: var(--success); background: rgba(34,197,94,0.1); }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 400;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px 16px 0 0;
+      padding: 24px 20px;
+      padding-bottom: calc(24px + env(safe-area-inset-bottom));
+      width: 100%;
+      max-width: 640px;
+      max-height: 85vh;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 0.25s ease;
+    }
+    .modal-overlay.open .modal-box { transform: translateY(0); }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .modal-title { font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2px; }
+    .modal-close {
+      background: none; border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 22px; line-height: 1;
+      padding: 2px 6px;
+      touch-action: manipulation;
+    }
+    .modal-close:hover { color: var(--text-primary); }
+
+    .goal-type-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 20px; }
+    .goal-type-card {
+      background: #0d0d0d;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 12px 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color var(--transition), background var(--transition);
+      touch-action: manipulation;
+    }
+    .goal-type-card:hover, .goal-type-card.selected { border-color: var(--accent); background: var(--accent-bg); }
+    .goal-type-icon { font-size: 22px; margin-bottom: 5px; }
+    .goal-type-label { font-size: 11px; color: var(--text-secondary); font-weight: 500; }
+
+    .goal-config-form { display: none; border-top: 1px solid var(--border); padding-top: 16px; }
+    .goal-config-form.show { display: block; }
+    .gcf-field { margin-bottom: 14px; }
+    .gcf-field label {
+      display: block;
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    .gcf-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .gcf-grid label { font-size: 10px; color: var(--text-muted); letter-spacing: 1px; display: block; margin-bottom: 4px; text-transform: uppercase; }
+    .modal-actions { display: flex; gap: 8px; margin-top: 20px; }
+    .modal-actions .btn { flex: 1; text-align: center; }
+
+    /* Streak */
+    .streak-section { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .streak-section h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px; letter-spacing: 2px;
+      color: var(--text-muted); margin-bottom: 14px;
+    }
+    .streak-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .streak-table th {
+      text-align: left; color: var(--text-muted); font-weight: 500;
+      padding: 6px 8px; border-bottom: 1px solid var(--border);
+      font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+    }
+    .streak-table td {
+      padding: 9px 8px; border-bottom: 1px solid #161616;
+      color: var(--text-secondary); vertical-align: middle;
+    }
+    .streak-table tr:last-child td { border-bottom: none; }
+    .streak-num { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--accent); }
+
+    @media (max-width: 600px) {
+      .prog-filter-bar select { flex-basis: calc(50% - 4px); }
+      input[type="number"].goal-num { font-size: 16px; }
+    }
   </style>
 </head>
 <body>
@@ -728,13 +1006,69 @@
     <div class="view-header">
       <h1>PROGRESS <span style="color:var(--accent)">HUB</span></h1>
     </div>
-    <div class="progress-filter">
+    <div class="prog-filter-bar">
       <input type="text" id="prog-filter" placeholder="Filter exercises…">
+      <select id="prog-sort">
+        <option value="az">A → Z</option>
+        <option value="za">Z → A</option>
+        <option value="sessions">Most Sessions</option>
+        <option value="recent">Most Recent</option>
+        <option value="gain">Biggest Weight Gain</option>
+      </select>
+      <select id="prog-day-filter">
+        <option value="">All Days</option>
+      </select>
     </div>
     <div id="prog-list"></div>
   </div>
 
+  <!-- ════ VIEW 4: DAILY GOALS ════ -->
+  <div class="view" id="view-goals">
+    <div class="view-header">
+      <h1>DAILY <span>GOALS</span></h1>
+      <div class="sub">HABITS &amp; STREAKS</div>
+    </div>
+    <div class="goals-header-row">
+      <div id="goals-date" style="font-size:12px;color:var(--text-muted);letter-spacing:1px;font-family:'JetBrains Mono',monospace;"></div>
+      <button class="btn btn-sm" id="add-goal-btn">+ Add Goal</button>
+    </div>
+    <div id="goals-list"></div>
+    <div class="streak-section" id="streak-section" style="display:none;">
+      <h3>STREAK OVERVIEW</h3>
+      <div id="streak-table-wrap"></div>
+    </div>
+  </div>
+
 </div><!-- .app -->
+
+<!-- ════ GOAL MODAL ════ -->
+<div class="modal-overlay" id="goal-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">ADD GOAL</div>
+      <button class="modal-close" id="modal-close-btn">×</button>
+    </div>
+    <div class="goal-type-grid" id="goal-type-grid">
+      <div class="goal-type-card" data-type="water"><div class="goal-type-icon">💧</div><div class="goal-type-label">Water</div></div>
+      <div class="goal-type-card" data-type="steps"><div class="goal-type-icon">👟</div><div class="goal-type-label">Steps</div></div>
+      <div class="goal-type-card" data-type="meditation"><div class="goal-type-icon">🧘</div><div class="goal-type-label">Meditation</div></div>
+      <div class="goal-type-card" data-type="study"><div class="goal-type-icon">📚</div><div class="goal-type-label">Study</div></div>
+      <div class="goal-type-card" data-type="macros"><div class="goal-type-icon">🥗</div><div class="goal-type-label">Macros</div></div>
+      <div class="goal-type-card" data-type="custom"><div class="goal-type-icon">✅</div><div class="goal-type-label">Custom</div></div>
+    </div>
+    <div class="goal-config-form" id="goal-config-form">
+      <div class="gcf-field">
+        <label>Goal Name</label>
+        <input type="text" id="gcf-name" placeholder="e.g. Drink more water…">
+      </div>
+      <div id="gcf-extra"></div>
+      <div class="modal-actions">
+        <button class="btn" id="gcf-save-btn">Save Goal</button>
+        <button class="btn btn-danger" id="gcf-cancel-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ════ BOTTOM NAV ════ -->
 <nav class="bottom-nav">
@@ -756,6 +1090,12 @@
       <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
     </svg>
     Progress
+  </button>
+  <button class="nav-tab" id="tab-goals" data-view="goals">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
+    </svg>
+    Goals
   </button>
 </nav>
 
@@ -856,6 +1196,12 @@ function navigateTo(view, dayId) {
     document.getElementById('view-progress').classList.add('active');
     document.getElementById('tab-progress').classList.add('active');
     renderProgress();
+
+  } else if (view === 'goals') {
+    document.getElementById('view-goals').classList.add('active');
+    document.getElementById('tab-goals').classList.add('active');
+    checkDailyReset();
+    renderGoals();
   }
 }
 
@@ -870,6 +1216,7 @@ function navigateToToday() {
 document.getElementById('tab-week').onclick     = () => navigateTo('week');
 document.getElementById('tab-today').onclick    = () => navigateToToday();
 document.getElementById('tab-progress').onclick = () => navigateTo('progress');
+document.getElementById('tab-goals').onclick    = () => navigateTo('goals');
 document.getElementById('back-btn').onclick     = () => navigateTo('week');
 
 // ════════════════════════════════════════════════════════════
@@ -1005,8 +1352,12 @@ function buildExCard(ex, data) {
   const card = document.createElement('div');
   card.className = 'ex-card';
   card.id = `exc-${ex.id}`;
+  card.draggable = true;
 
   card.innerHTML = `
+    <div class="ex-card-inner">
+      <div class="drag-handle" title="Drag to reorder">⠿</div>
+      <div class="ex-card-content">
     <div class="ex-card-header">
       <div class="ex-name">${escHtml(ex.name)}</div>
       <button class="btn-icon danger" data-rm="${ex.id}" title="Remove from this day">
@@ -1050,7 +1401,25 @@ function buildExCard(ex, data) {
         <button class="btn btn-sm btn-danger" data-cancel="${ex.id}">Cancel</button>
       </div>
     </div>
+      </div><!-- .ex-card-content -->
+    </div><!-- .ex-card-inner -->
   `;
+
+  // Drag and drop
+  card.addEventListener('dragstart', e => {
+    e.dataTransfer.setData('text/plain', ex.id);
+    e.dataTransfer.effectAllowed = 'move';
+    setTimeout(() => card.classList.add('dragging'), 0);
+  });
+  card.addEventListener('dragend', () => card.classList.remove('dragging'));
+  card.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; card.classList.add('drag-over'); });
+  card.addEventListener('dragleave', () => card.classList.remove('drag-over'));
+  card.addEventListener('drop', e => {
+    e.preventDefault();
+    card.classList.remove('drag-over');
+    const fromId = e.dataTransfer.getData('text/plain');
+    if (fromId && fromId !== ex.id) reorderExercises(currentDayId, fromId, ex.id);
+  });
 
   // Remove button
   card.querySelector(`[data-rm="${ex.id}"]`).addEventListener('click', () => {
@@ -1118,6 +1487,21 @@ function removeExFromDay(exId) {
   const ex = findExById(data, exId);
   if (ex) ex.dayIds = (ex.dayIds||[]).filter(id => id !== currentDayId);
 
+  saveData(data);
+  renderDay();
+}
+
+function reorderExercises(dayId, fromExId, toExId) {
+  const data = getData();
+  const day  = findDayById(data, dayId);
+  if (!day) return;
+  const ids = day.exerciseIds || [];
+  const fi  = ids.indexOf(fromExId);
+  const ti  = ids.indexOf(toExId);
+  if (fi === -1 || ti === -1) return;
+  ids.splice(fi, 1);
+  ids.splice(ti, 0, fromExId);
+  day.exerciseIds = ids;
   saveData(data);
   renderDay();
 }
@@ -1202,17 +1586,64 @@ function doAddEx() {
 // ════════════════════════════════════════════════════════════
 const charts = {};
 
+function populateDayFilter() {
+  const data = getData();
+  const sel  = document.getElementById('prog-day-filter');
+  const cur  = sel.value;
+  // keep first "All Days" option
+  while (sel.options.length > 1) sel.remove(1);
+  data.days.forEach(d => {
+    if ((d.exerciseIds||[]).length > 0) {
+      const opt = document.createElement('option');
+      opt.value = d.id;
+      opt.textContent = d.dayOfWeek + (d.label ? ` — ${d.label}` : '');
+      sel.appendChild(opt);
+    }
+  });
+  sel.value = cur;
+}
+
 function renderProgress() {
   // Destroy old chart instances
   Object.keys(charts).forEach(k => { try { charts[k].destroy(); } catch(_){} delete charts[k]; });
 
-  const data   = getData();
-  const filter = (document.getElementById('prog-filter').value || '').trim().toLowerCase();
-  const list   = document.getElementById('prog-list');
-  list.innerHTML = '';
+  populateDayFilter();
 
-  let exercises = [...data.exercises].sort((a,b) => a.name.localeCompare(b.name));
+  const data      = getData();
+  const filter    = (document.getElementById('prog-filter').value || '').trim().toLowerCase();
+  const sortBy    = document.getElementById('prog-sort').value || 'az';
+  const dayFilter = document.getElementById('prog-day-filter').value || '';
+  const list      = document.getElementById('prog-list');
+  list.innerHTML  = '';
+
+  let exercises = [...data.exercises];
+
+  // Text filter
   if (filter) exercises = exercises.filter(e => e.name.toLowerCase().includes(filter));
+
+  // Day filter
+  if (dayFilter) exercises = exercises.filter(e => (e.dayIds||[]).includes(dayFilter));
+
+  // Sort
+  exercises.sort((a,b) => {
+    if (sortBy === 'az') return a.name.localeCompare(b.name);
+    if (sortBy === 'za') return b.name.localeCompare(a.name);
+    if (sortBy === 'sessions') return (b.sessions||[]).length - (a.sessions||[]).length;
+    if (sortBy === 'recent') {
+      const la = lastSession(a), lb = lastSession(b);
+      if (!la && !lb) return 0;
+      if (!la) return 1; if (!lb) return -1;
+      return lb.date.localeCompare(la.date);
+    }
+    if (sortBy === 'gain') {
+      const gainOf = ex => {
+        const s = sortedSessions(ex);
+        return s.length >= 2 ? s[s.length-1].weight - s[0].weight : -Infinity;
+      };
+      return gainOf(b) - gainOf(a);
+    }
+    return 0;
+  });
 
   if (exercises.length === 0) {
     list.innerHTML = `
@@ -1264,14 +1695,19 @@ function renderProgress() {
     const chartId  = `chart-${ex.id}`;
     const showChart = sess.length >= 2;
 
+    const isUnused = (ex.dayIds||[]).length === 0;
+
     const card = document.createElement('div');
     card.className = 'prog-card';
 
     card.innerHTML = `
-      <div class="prog-ex-name">${escHtml(ex.name)}</div>
+      <div class="prog-card-header">
+        <div class="prog-ex-name" style="margin-bottom:0;">${escHtml(ex.name)}</div>
+        ${isUnused ? '<span class="unused-badge">UNUSED</span>' : ''}
+      </div>
       <div class="day-pills">
         ${dayNames.map(d => `<span class="day-pill">${d}</span>`).join('')}
-        ${dayNames.length === 0 ? '<span style="color:var(--text-muted);font-size:12px;">Unassigned</span>' : ''}
+        ${dayNames.length === 0 ? '<span style="color:var(--text-muted);font-size:12px;">Not assigned to any day</span>' : ''}
       </div>
       <div class="stats-row">
         <div class="stat">
@@ -1297,6 +1733,7 @@ function renderProgress() {
         </svg>
         Full History (${sess.length})
       </button>
+      ${isUnused ? `<div style="margin-top:10px;"><button class="btn btn-sm btn-danger btn-remove-global" data-rmglobal="${ex.id}">Remove Exercise</button></div>` : ''}
       <div class="hist-wrap" id="hw-${ex.id}">
         <table class="hist-table">
           <thead><tr><th>Date</th><th>Sets</th><th>Reps</th><th>Weight</th><th>Notes</th><th></th></tr></thead>
@@ -1306,6 +1743,13 @@ function renderProgress() {
     `;
 
     list.appendChild(card);
+
+    // Remove exercise globally (only shown for unused)
+    if (isUnused) {
+      card.querySelector(`[data-rmglobal="${ex.id}"]`).addEventListener('click', () => {
+        removeExerciseGlobal(ex.id, ex.name);
+      });
+    }
 
     // Populate history table (newest first)
     const tbody = document.getElementById(`hb-${ex.id}`);
@@ -1403,8 +1847,535 @@ function deleteSession(exId, sessionId) {
   renderProgress();
 }
 
+function removeExerciseGlobal(exId, exName) {
+  if (!confirm(`Remove "${exName}" permanently? All its session history will be deleted. This cannot be undone.`)) return;
+  const data = getData();
+  // Remove from exercises array
+  data.exercises = data.exercises.filter(e => e.id !== exId);
+  // Remove from all day exerciseIds just in case
+  data.days.forEach(d => { d.exerciseIds = (d.exerciseIds||[]).filter(id => id !== exId); });
+  saveData(data);
+  renderProgress();
+}
+
 // Progress filter live input
 document.getElementById('prog-filter').addEventListener('input', renderProgress);
+document.getElementById('prog-sort').addEventListener('change', renderProgress);
+document.getElementById('prog-day-filter').addEventListener('change', renderProgress);
+
+// ════════════════════════════════════════════════════════════
+//  VIEW 4 — DAILY GOALS
+// ════════════════════════════════════════════════════════════
+const GOALS_KEY     = 'forgetrack_goals';
+const GOALS_LOG_KEY = 'forgetrack_goals_log';
+const LAST_DATE_KEY = 'forgetrack_last_date';
+
+function getGoals()           { return JSON.parse(localStorage.getItem(GOALS_KEY)     || '[]'); }
+function saveGoals(g)         { localStorage.setItem(GOALS_KEY, JSON.stringify(g)); }
+function getGoalLogs()        { return JSON.parse(localStorage.getItem(GOALS_LOG_KEY) || '{}'); }
+function saveGoalLogs(l)      { localStorage.setItem(GOALS_LOG_KEY, JSON.stringify(l)); }
+
+function getTodayLog() {
+  const logs = getGoalLogs();
+  return logs[todayISO()] || {};
+}
+
+function upsertTodayLog(goalId, value) {
+  const logs = getGoalLogs();
+  if (!logs[todayISO()]) logs[todayISO()] = {};
+  logs[todayISO()][goalId] = value;
+  saveGoalLogs(logs);
+}
+
+function checkDailyReset() {
+  // Additive only — we never wipe old logs. Just ensure today's key exists.
+  const today = todayISO();
+  localStorage.setItem(LAST_DATE_KEY, today);
+  const logs = getGoalLogs();
+  if (!logs[today]) { logs[today] = {}; saveGoalLogs(logs); }
+}
+
+// ── Streak calculation ────────────────────────────────────
+function isGoalComplete(goal, val) {
+  if (val === undefined || val === null) return false;
+  switch (goal.type) {
+    case 'water':      return (val.cups      || 0) >= (goal.target || 8);
+    case 'steps':      return (val.steps     || 0) >= (goal.target || 10000);
+    case 'meditation': return (val.minutes   || 0) >= (goal.target || 10);
+    case 'study':      return (val.minutes   || 0) >= (goal.target || 30);
+    case 'macros':
+      return (val.protein || 0) >= (goal.protein || 0) &&
+             (val.carbs   || 0) >= (goal.carbs   || 0) &&
+             (val.fat     || 0) >= (goal.fat     || 0);
+    case 'custom':     return val.done === true;
+    default:           return false;
+  }
+}
+
+function calcStreakInfo(goalId) {
+  const logs = getGoalLogs();
+  const goal = getGoals().find(g => g.id === goalId);
+  if (!goal) return { current: 0, longest: 0, total: 0 };
+
+  const complete = iso => isGoalComplete(goal, (logs[iso] || {})[goalId]);
+  const today    = todayISO();
+
+  // Current streak: walk backwards from today
+  let current = 0;
+  let d = new Date(today + 'T00:00:00');
+  while (true) {
+    const iso = d.toISOString().slice(0, 10);
+    if (complete(iso)) { current++; d.setDate(d.getDate() - 1); }
+    else break;
+  }
+
+  // Longest streak & total from all logged dates
+  const allDates = Object.keys(logs).sort();
+  let longest = 0, streak = 0, total = 0;
+  if (allDates.length > 0) {
+    let cur = new Date(allDates[0] + 'T00:00:00');
+    const last = new Date(today + 'T00:00:00');
+    while (cur <= last) {
+      const iso = cur.toISOString().slice(0, 10);
+      if (complete(iso)) { streak++; total++; if (streak > longest) longest = streak; }
+      else streak = 0;
+      cur.setDate(cur.getDate() + 1);
+    }
+  }
+  return { current, longest, total };
+}
+
+// ── Modal ─────────────────────────────────────────────────
+let selectedGoalType = null;
+
+const GOAL_TYPES = {
+  water:      { icon: '💧', label: 'Water' },
+  steps:      { icon: '👟', label: 'Steps' },
+  meditation: { icon: '🧘', label: 'Meditation' },
+  study:      { icon: '📚', label: 'Study' },
+  macros:     { icon: '🥗', label: 'Macros' },
+  custom:     { icon: '✅', label: 'Custom' }
+};
+
+const EXTRA_FIELDS = {
+  water:      `<div class="gcf-field"><label>Daily Target (cups)</label><input type="number" class="goal-num" id="gcf-target" min="1" max="30" value="8"></div>`,
+  steps:      `<div class="gcf-field"><label>Daily Target (steps)</label><input type="number" class="goal-num" id="gcf-target" min="100" value="10000"></div>`,
+  meditation: `<div class="gcf-field"><label>Daily Target (minutes)</label><input type="number" class="goal-num" id="gcf-target" min="1" value="10"></div>`,
+  study:      `<div class="gcf-field"><label>Daily Target (minutes)</label><input type="number" class="goal-num" id="gcf-target" min="1" value="30"></div>`,
+  macros:     `<div class="gcf-field"><label>Daily Macro Targets (g)</label>
+                 <div class="gcf-grid">
+                   <div><label>PROTEIN</label><input type="number" class="goal-num" id="gcf-protein" min="0" value="150"></div>
+                   <div><label>CARBS</label><input type="number" class="goal-num" id="gcf-carbs" min="0" value="200"></div>
+                   <div><label>FAT</label><input type="number" class="goal-num" id="gcf-fat" min="0" value="60"></div>
+                 </div></div>`,
+  custom:     ''
+};
+
+function openGoalModal() {
+  selectedGoalType = null;
+  document.getElementById('goal-config-form').classList.remove('show');
+  document.getElementById('gcf-name').value = '';
+  document.getElementById('gcf-extra').innerHTML = '';
+  document.querySelectorAll('.goal-type-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('goal-modal').classList.add('open');
+}
+
+function closeGoalModal() {
+  document.getElementById('goal-modal').classList.remove('open');
+}
+
+document.getElementById('add-goal-btn').addEventListener('click', openGoalModal);
+document.getElementById('modal-close-btn').addEventListener('click', closeGoalModal);
+document.getElementById('gcf-cancel-btn').addEventListener('click', closeGoalModal);
+
+document.getElementById('goal-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('goal-modal')) closeGoalModal();
+});
+
+document.querySelectorAll('.goal-type-card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.goal-type-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedGoalType = card.dataset.type;
+    document.getElementById('gcf-extra').innerHTML = EXTRA_FIELDS[selectedGoalType] || '';
+    const nameEl = document.getElementById('gcf-name');
+    if (!nameEl.value) nameEl.value = GOAL_TYPES[selectedGoalType].label;
+    document.getElementById('goal-config-form').classList.add('show');
+  });
+});
+
+document.getElementById('gcf-save-btn').addEventListener('click', () => {
+  if (!selectedGoalType) return;
+  const name = document.getElementById('gcf-name').value.trim();
+  if (!name) { document.getElementById('gcf-name').style.borderColor='var(--danger)'; setTimeout(()=>document.getElementById('gcf-name').style.borderColor='',1500); return; }
+
+  const goal = { id: crypto.randomUUID(), type: selectedGoalType, name };
+
+  if (selectedGoalType === 'macros') {
+    goal.protein = parseInt(document.getElementById('gcf-protein')?.value) || 0;
+    goal.carbs   = parseInt(document.getElementById('gcf-carbs')?.value) || 0;
+    goal.fat     = parseInt(document.getElementById('gcf-fat')?.value) || 0;
+  } else if (selectedGoalType !== 'custom') {
+    goal.target = parseInt(document.getElementById('gcf-target')?.value) || 0;
+  }
+
+  const goals = getGoals();
+  goals.push(goal);
+  saveGoals(goals);
+  closeGoalModal();
+  renderGoals();
+});
+
+// ── Goal card builders ────────────────────────────────────
+function buildGoalCard(goal, todayLog) {
+  const val = todayLog[goal.id];
+  const complete = isGoalComplete(goal, val);
+
+  const card = document.createElement('div');
+  card.className = 'goal-card' + (complete ? ' complete' : '');
+  card.dataset.goalId = goal.id;
+  card.draggable = true;
+
+  const typeInfo = GOAL_TYPES[goal.type] || { icon: '🎯', label: goal.type };
+  const header = `
+    <div class="goal-card-header">
+      <div class="goal-card-title-wrap">
+        <div class="goal-card-title">${typeInfo.icon} ${escHtml(goal.name)}</div>
+        <div class="goal-type-badge">${typeInfo.label}</div>
+      </div>
+      <div class="goal-card-actions">
+        <button class="btn-icon danger" data-rmgoal="${goal.id}" title="Delete goal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+            <polyline points="3,6 5,6 21,6"/>
+            <path d="M19,6l-1,14H6L5,6M10,11v6M14,11v6M9,6V4h6v2"/>
+          </svg>
+        </button>
+        <span class="goal-drag-handle" title="Drag to reorder">⠿</span>
+      </div>
+    </div>`;
+
+  let body = '';
+  switch (goal.type) {
+    case 'water':      body = buildWaterBody(goal, val); break;
+    case 'steps':      body = buildStepsBody(goal, val); break;
+    case 'meditation':
+    case 'study':      body = buildRingBody(goal, val); break;
+    case 'macros':     body = buildMacrosBody(goal, val); break;
+    case 'custom':     body = buildCustomBody(goal, val); break;
+  }
+
+  card.innerHTML = header + body;
+
+  // Delete goal
+  card.querySelector(`[data-rmgoal="${goal.id}"]`).addEventListener('click', () => {
+    if (confirm(`Delete goal "${goal.name}"?`)) {
+      const goals = getGoals().filter(g => g.id !== goal.id);
+      saveGoals(goals);
+      renderGoals();
+    }
+  });
+
+  // Goal-specific event wiring
+  wireGoalCard(card, goal, val);
+
+  // Drag and drop
+  card.addEventListener('dragstart', e => {
+    e.dataTransfer.setData('text/plain', goal.id);
+    e.dataTransfer.effectAllowed = 'move';
+    setTimeout(() => card.classList.add('goal-dragging'), 0);
+  });
+  card.addEventListener('dragend', () => card.classList.remove('goal-dragging'));
+  card.addEventListener('dragover', e => { e.preventDefault(); card.classList.add('goal-drag-over'); });
+  card.addEventListener('dragleave', () => card.classList.remove('goal-drag-over'));
+  card.addEventListener('drop', e => {
+    e.preventDefault();
+    card.classList.remove('goal-drag-over');
+    const fromId = e.dataTransfer.getData('text/plain');
+    if (fromId && fromId !== goal.id) reorderGoals(fromId, goal.id);
+  });
+
+  return card;
+}
+
+function pct(cur, target) {
+  if (!target) return 0;
+  return Math.min(100, Math.round((cur / target) * 100));
+}
+
+function progressBarHTML(cur, target, cls='') {
+  const p = pct(cur, target);
+  const done = p >= 100;
+  return `
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill ${done ? 'complete' : ''}" style="width:${p}%"></div>
+    </div>
+    <div class="progress-lbl">${cur} / ${target} ${cls}</div>`;
+}
+
+// WATER
+function buildWaterBody(goal, val) {
+  const cups = (val && val.cups) || 0;
+  const target = goal.target || 8;
+  let cupsHTML = '';
+  for (let i = 0; i < target; i++) {
+    cupsHTML += `<div class="cup ${i < cups ? 'filled' : ''}" data-cup="${i}">💧</div>`;
+  }
+  return `<div class="cups-row" id="cups-${goal.id}">${cupsHTML}</div>
+    <div class="progress-lbl">${cups} / ${target} cups</div>`;
+}
+
+// STEPS
+function buildStepsBody(goal, val) {
+  const steps = (val && val.steps) || 0;
+  const target = goal.target || 10000;
+  return `
+    <div class="steps-row">
+      <input type="number" class="goal-num" id="steps-inp-${goal.id}" value="${steps}" min="0" placeholder="0">
+      <span class="step-unit">/ ${target.toLocaleString()} steps</span>
+    </div>
+    ${progressBarHTML(steps, target)}`;
+}
+
+// RING (meditation / study)
+function buildRingBody(goal, val) {
+  const mins   = (val && val.minutes) || 0;
+  const target = goal.target || 10;
+  const r = 28, c = 2 * Math.PI * r;
+  const offset = c - (Math.min(mins / target, 1) * c);
+  const done = mins >= target;
+  const color = done ? 'var(--success)' : 'var(--accent)';
+  return `
+    <div class="ring-wrap">
+      <svg class="ring-svg" width="72" height="72" viewBox="0 0 72 72">
+        <circle class="ring-track" cx="36" cy="36" r="${r}" fill="none" stroke-width="6"/>
+        <circle cx="36" cy="36" r="${r}" fill="none" stroke="${color}" stroke-width="6"
+          stroke-linecap="round"
+          stroke-dasharray="${c.toFixed(2)}"
+          stroke-dashoffset="${offset.toFixed(2)}"
+          style="transition:stroke-dashoffset 0.4s ease,stroke 0.3s ease"/>
+      </svg>
+      <div class="ring-center">
+        <div class="ring-val" id="ring-val-${goal.id}">${mins}<span style="font-size:12px;color:var(--text-muted)">min</span></div>
+        <div class="ring-sub">Goal: ${target} min</div>
+        ${done ? '<div style="font-size:11px;color:var(--success);font-weight:600;">✓ Done!</div>' : ''}
+      </div>
+    </div>
+    <div class="add-mins-row" id="mins-btns-${goal.id}">
+      <button class="btn btn-sm" data-add="5">+5 min</button>
+      <button class="btn btn-sm" data-add="10">+10 min</button>
+      <button class="btn btn-sm" data-add="15">+15 min</button>
+    </div>`;
+}
+
+// MACROS
+function buildMacrosBody(goal, val) {
+  const protein = (val && val.protein) || 0;
+  const carbs   = (val && val.carbs)   || 0;
+  const fat     = (val && val.fat)     || 0;
+
+  function macroBar(label, cur, target) {
+    const p = pct(cur, target);
+    const done = p >= 100;
+    return `<div class="macro-bar-row">
+      <div class="macro-bar-label-row">
+        <span class="macro-bar-name">${label}</span>
+        <span class="macro-bar-val">${cur} / ${target}g</span>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill ${done?'complete':''}" style="width:${p}%"></div>
+      </div>
+    </div>`;
+  }
+
+  return `
+    <div class="macro-bars">
+      ${macroBar('Protein', protein, goal.protein||0)}
+      ${macroBar('Carbs',   carbs,   goal.carbs  ||0)}
+      ${macroBar('Fat',     fat,     goal.fat    ||0)}
+    </div>
+    <div class="macro-inputs-grid" id="macro-grid-${goal.id}">
+      <div class="macro-input-col"><label>PROTEIN (g)</label><input type="number" class="goal-num" id="mac-p-${goal.id}" min="0" value="${protein}"></div>
+      <div class="macro-input-col"><label>CARBS (g)</label><input type="number" class="goal-num" id="mac-c-${goal.id}" min="0" value="${carbs}"></div>
+      <div class="macro-input-col"><label>FAT (g)</label><input type="number" class="goal-num" id="mac-f-${goal.id}" min="0" value="${fat}"></div>
+    </div>`;
+}
+
+// CUSTOM
+function buildCustomBody(goal, val) {
+  const done = val && val.done;
+  return `<button class="custom-done-btn ${done?'done':''}" id="custom-btn-${goal.id}">
+    ${done ? '✓ Done!' : 'Mark as Done'}
+  </button>`;
+}
+
+// ── Targeted visual updates (no full re-render, preserves input focus) ──
+function updateCardComplete(card, complete) {
+  card.classList.toggle('complete', complete);
+}
+
+function updateStepsVisuals(card, goal, steps) {
+  const target = goal.target || 10000;
+  const p = Math.min(100, Math.round((steps / target) * 100));
+  const done = steps >= target;
+  const fill = card.querySelector('.progress-bar-fill');
+  const lbl  = card.querySelector('.progress-lbl');
+  if (fill) { fill.style.width = p + '%'; fill.classList.toggle('complete', done); }
+  if (lbl)  lbl.textContent = `${steps} / ${target}`;
+  updateCardComplete(card, done);
+}
+
+function updateMacroVisuals(card, goal, vals) {
+  const targets = { protein: goal.protein||0, carbs: goal.carbs||0, fat: goal.fat||0 };
+  const keys    = ['protein','carbs','fat'];
+  const fills   = card.querySelectorAll('.progress-bar-fill');
+  const lbls    = card.querySelectorAll('.macro-bar-val');
+  keys.forEach((k, i) => {
+    const cur = vals[k] || 0;
+    const tgt = targets[k];
+    const p   = tgt ? Math.min(100, Math.round((cur / tgt) * 100)) : 0;
+    const done = cur >= tgt;
+    if (fills[i]) { fills[i].style.width = p + '%'; fills[i].classList.toggle('complete', done); }
+    if (lbls[i])  lbls[i].textContent = `${cur} / ${tgt}g`;
+  });
+  const allDone = vals.protein >= targets.protein && vals.carbs >= targets.carbs && vals.fat >= targets.fat;
+  updateCardComplete(card, allDone);
+}
+
+// ── Wire interactive elements ─────────────────────────────
+let debounceTimers = {};
+
+function wireGoalCard(card, goal, val) {
+  const gid = goal.id;
+
+  if (goal.type === 'water') {
+    card.querySelector(`#cups-${gid}`).addEventListener('click', e => {
+      const cup = e.target.closest('.cup');
+      if (!cup) return;
+      const idx = parseInt(cup.dataset.cup);
+      const cur = (getTodayLog()[gid] || {}).cups || 0;
+      const newCups = (idx < cur) ? idx : idx + 1; // toggle: click filled → remove that and after
+      upsertTodayLog(gid, { cups: newCups < 0 ? 0 : newCups });
+      renderGoals();
+    });
+  }
+
+  if (goal.type === 'steps') {
+    const inp = card.querySelector(`#steps-inp-${gid}`);
+    inp && inp.addEventListener('input', () => {
+      clearTimeout(debounceTimers[gid]);
+      debounceTimers[gid] = setTimeout(() => {
+        const steps = parseInt(inp.value) || 0;
+        upsertTodayLog(gid, { steps });
+        updateStepsVisuals(card, goal, steps);
+      }, 500);
+    });
+  }
+
+  if (goal.type === 'meditation' || goal.type === 'study') {
+    card.querySelector(`#mins-btns-${gid}`).addEventListener('click', e => {
+      const add = parseInt(e.target.dataset.add);
+      if (!add) return;
+      const cur = (getTodayLog()[gid] || {}).minutes || 0;
+      upsertTodayLog(gid, { minutes: cur + add });
+      renderGoals();
+    });
+  }
+
+  if (goal.type === 'macros') {
+    ['p','c','f'].forEach(k => {
+      const inp = card.querySelector(`#mac-${k}-${gid}`);
+      inp && inp.addEventListener('input', () => {
+        clearTimeout(debounceTimers[gid + k]);
+        debounceTimers[gid + k] = setTimeout(() => {
+          const vals = {
+            protein: parseInt(card.querySelector(`#mac-p-${gid}`)?.value) || 0,
+            carbs:   parseInt(card.querySelector(`#mac-c-${gid}`)?.value) || 0,
+            fat:     parseInt(card.querySelector(`#mac-f-${gid}`)?.value) || 0
+          };
+          upsertTodayLog(gid, vals);
+          updateMacroVisuals(card, goal, vals);
+        }, 500);
+      });
+    });
+  }
+
+  if (goal.type === 'custom') {
+    card.querySelector(`#custom-btn-${gid}`).addEventListener('click', () => {
+      const cur = (getTodayLog()[gid] || {}).done;
+      upsertTodayLog(gid, { done: !cur });
+      renderGoals();
+    });
+  }
+}
+
+// ── Goal reorder ──────────────────────────────────────────
+function reorderGoals(fromId, toId) {
+  const goals = getGoals();
+  const fi = goals.findIndex(g => g.id === fromId);
+  const ti = goals.findIndex(g => g.id === toId);
+  if (fi === -1 || ti === -1) return;
+  const [item] = goals.splice(fi, 1);
+  goals.splice(ti, 0, item);
+  saveGoals(goals);
+  renderGoals();
+}
+
+// ── Streak table ──────────────────────────────────────────
+function renderStreakOverview() {
+  const goals = getGoals();
+  const wrap  = document.getElementById('streak-table-wrap');
+  const sec   = document.getElementById('streak-section');
+  if (goals.length === 0) { sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+
+  let rows = goals.map(g => {
+    const info = calcStreakInfo(g.id);
+    const typeInfo = GOAL_TYPES[g.type] || {};
+    return `<tr>
+      <td>${typeInfo.icon || ''} ${escHtml(g.name)}</td>
+      <td><span class="streak-num">${info.current}</span>${info.current > 0 ? ' 🔥' : ''}</td>
+      <td><span class="streak-num">${info.longest}</span></td>
+      <td><span class="streak-num">${info.total}</span></td>
+    </tr>`;
+  }).join('');
+
+  wrap.innerHTML = `
+    <table class="streak-table">
+      <thead><tr><th>Goal</th><th>Current 🔥</th><th>Longest</th><th>Total Days</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+// ── Main render ───────────────────────────────────────────
+function renderGoals() {
+  const goals    = getGoals();
+  const todayLog = getTodayLog();
+  const list     = document.getElementById('goals-list');
+  const dateEl   = document.getElementById('goals-date');
+
+  // Date display
+  const today = new Date();
+  dateEl.textContent = today.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long' }).toUpperCase();
+
+  list.innerHTML = '';
+
+  if (goals.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🎯</div>
+        <h3>NO GOALS YET</h3>
+        <p>Tap "+ Add Goal" to start tracking daily habits</p>
+      </div>`;
+    document.getElementById('streak-section').style.display = 'none';
+    return;
+  }
+
+  goals.forEach(goal => {
+    list.appendChild(buildGoalCard(goal, todayLog));
+  });
+
+  renderStreakOverview();
+}
 
 // ════════════════════════════════════════════════════════════
 //  BOOT
