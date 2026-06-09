@@ -781,19 +781,31 @@
     .goal-drag-handle:active { cursor: grabbing; }
 
     /* Water */
-    .cups-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+    .cups-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
     .cup {
-      width: 38px; height: 44px;
-      background: #0d0d0d;
-      border: 1px solid var(--border);
-      border-radius: 4px;
       cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px;
-      transition: background var(--transition), border-color var(--transition);
       touch-action: manipulation;
+      flex-shrink: 0;
     }
-    .cup.filled { background: var(--accent-bg); border-color: var(--accent); }
+    .cup svg { display: block; overflow: visible; }
+    /* water fill rect inside the SVG */
+    .cup .glass-fill {
+      transition: height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  y      0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    /* glow when filled */
+    .cup.filled svg {
+      filter: drop-shadow(0 0 6px rgba(249,115,22,0.6));
+    }
+    /* wave animation — only runs on filled cups */
+    @keyframes waterWave {
+      0%   { transform: translateY(0); }
+      50%  { transform: translateY(-2px); }
+      100% { transform: translateY(0); }
+    }
+    .cup.filled .wave-group {
+      animation: waterWave 1.8s ease-in-out infinite;
+    }
 
     /* Progress bar */
     .progress-bar-wrap {
@@ -2114,11 +2126,55 @@ function progressBarHTML(cur, target, cls='') {
 
 // WATER
 function buildWaterBody(goal, val) {
-  const cups = (val && val.cups) || 0;
+  const cups   = (val && val.cups) || 0;
   const target = goal.target || 8;
+
+  // SVG glass dimensions
+  // Trapezoid: wider at top, slightly narrower at bottom
+  // viewBox is 32×42; glass drawn inside with a small margin
+  // Top inner edge y=4, bottom inner edge y=38 → usable fill height = 34px
+  // Fill goes from bottom up to 85% of that = ~29px fill height
+  const VW = 32, VH = 42;
+  const topLeft = 2, topRight = VW - 2;       // top outer corners
+  const botLeft = 5, botRight = VW - 5;        // bottom outer corners (narrower)
+  const innerTopL = topLeft + 1.5, innerTopR = topRight - 1.5;
+  const innerBotL = botLeft  + 1.5, innerBotR = botRight  - 1.5;
+  const innerTop = 5, innerBot = VH - 4;       // inner top/bottom y positions
+  const fillMaxH = Math.round((innerBot - innerTop) * 0.85); // max fill height
+  const fillBottom = innerBot;
+
+  function glassSVG(idx, filled) {
+    const fillH  = filled ? fillMaxH : 0;
+    const fillY  = fillBottom - fillH;
+    const strokeCol = filled ? '#f97316' : '#333333';
+    // Clip region: the trapezoidal interior
+    // We use a clipPath so the fill rect is clipped to the glass shape
+    const clipId = `gc-${goal.id}-${idx}`;
+    return `<div class="cup ${filled ? 'filled' : ''}" data-cup="${idx}">
+      <svg width="${VW}" height="${VH}" viewBox="0 0 ${VW} ${VH}">
+        <defs>
+          <clipPath id="${clipId}">
+            <polygon points="${innerTopL},${innerTop} ${innerTopR},${innerTop} ${innerBotR},${innerBot} ${innerBotL},${innerBot}"/>
+          </clipPath>
+        </defs>
+        <!-- Glass outline (trapezoid) -->
+        <polygon
+          points="${topLeft},${innerTop} ${topRight},${innerTop} ${botRight},${VH-2} ${botLeft},${VH-2}"
+          fill="none" stroke="${strokeCol}" stroke-width="2" stroke-linejoin="round"/>
+        <!-- Water fill group — wave animation applied here when filled -->
+        <g class="wave-group" clip-path="url(#${clipId})">
+          <rect class="glass-fill"
+            x="${innerBotL}" y="${fillY}"
+            width="${innerBotR - innerBotL}" height="${fillH}"
+            fill="rgba(249,115,22,0.80)"/>
+        </g>
+      </svg>
+    </div>`;
+  }
+
   let cupsHTML = '';
   for (let i = 0; i < target; i++) {
-    cupsHTML += `<div class="cup ${i < cups ? 'filled' : ''}" data-cup="${i}">💧</div>`;
+    cupsHTML += glassSVG(i, i < cups);
   }
   return `<div class="cups-row" id="cups-${goal.id}">${cupsHTML}</div>
     <div class="progress-lbl">${cups} / ${target} cups</div>`;
