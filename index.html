@@ -783,56 +783,37 @@
     /* Water */
     .cups-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
 
-    /* Cup = positioned container so fill div can sit at bottom */
+    /* Cup wrapper — sized to match the SVG */
     .cup {
-      position: relative;
-      width: 32px;
-      height: 42px;
       cursor: pointer;
       touch-action: manipulation;
       flex-shrink: 0;
+      display: inline-block;
+      line-height: 0;
     }
+    .cup svg { display: block; }
 
-    /* Static SVG outline — CSS drives stroke colour & glow */
-    .glass-outline {
-      position: absolute;
-      inset: 0;
-      display: block;
-      pointer-events: none;
-    }
-    .glass-outline polygon {
+    /* Glow on the whole SVG when filled */
+    .cup.filled svg { filter: drop-shadow(0 0 6px rgba(249,115,22,0.6)); }
+
+    /* Glass outline polygon — CSS drives stroke colour */
+    .glass-poly {
       fill: none;
       stroke: #333333;
       stroke-width: 1.5;
       stroke-linejoin: round;
-      transition: stroke 0.25s ease, filter 0.25s ease;
+      transition: stroke 0.25s ease;
     }
-    .cup.filled .glass-outline {
-      filter: drop-shadow(0 0 6px rgba(249,115,22,0.6));
-    }
-    .cup.filled .glass-outline polygon { stroke: #f97316; }
+    .cup.filled .glass-poly { stroke: #f97316; }
 
-    /* Trapezoidal clip area — the "inside" of the glass */
-    .glass-body {
-      position: absolute;
-      top: 5px; left: 0; right: 0; bottom: 3px;
-      /* clip-path shapes the trapezoid; overflow:hidden on the same element
-         clips the absolutely-positioned water fill so it cannot escape */
-      clip-path: polygon(0% 0%, 100% 0%, 83% 100%, 17% 100%);
-      overflow: hidden;
+    /* Water fill rect — translateY(100%) hides it below the clip region;
+       translateY(0) brings it up to show ~85% fill.
+       Transition only on transform; nothing else ever moves. */
+    .glass-water-rect {
+      transform: translateY(100%);
+      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-
-    /* Water fill — height: 0 empty, height: 85% filled.
-       Absolutely positioned so overflow:hidden on .glass-body reliably clips it.
-       Transition only on height; nothing else moves ever. */
-    .glass-water {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 0%;
-      background: rgba(249, 115, 22, 0.8);
-      transition: height 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    .glass-water.filled { height: 85%; }
+    .glass-water-rect.filled { transform: translateY(0); }
 
     /* Progress bar */
     .progress-bar-wrap {
@@ -2156,18 +2137,27 @@ function buildWaterBody(goal, val) {
   const cups   = (val && val.cups) || 0;
   const target = goal.target || 8;
 
-  // Rendering each cup with its correct initial state means no animation fires
-  // on initial paint — CSS transitions only fire when a property *changes* on an
-  // already-existing element, not on first insertion. So already-filled cups are
-  // rendered as static from the start.
+  // Glass geometry (SVG viewBox 32×42):
+  //   Outline trapezoid: wider at top (y=4), narrower at bottom (y=39)
+  //   Water rect covers bottom ~85% of the interior (y=9 → y=39, height=30)
+  //   clipPath hard-constrains the water to the glass shape at the SVG level.
+  //   translateY(100%) hides the rect below the clip region; translateY(0) shows it.
   function glassCup(idx, filled) {
+    const clipId = `gc-${goal.id}-${idx}`;
     return `<div class="cup ${filled ? 'filled' : ''}" data-cup="${idx}">
-      <svg class="glass-outline" width="32" height="42" viewBox="0 0 32 42">
-        <polygon points="2,4 30,4 27,39 5,39"/>
+      <svg width="32" height="42" viewBox="0 0 32 42" overflow="hidden">
+        <defs>
+          <clipPath id="${clipId}">
+            <polygon points="2,4 30,4 27,39 5,39"/>
+          </clipPath>
+        </defs>
+        <g clip-path="url(#${clipId})">
+          <rect class="glass-water-rect ${filled ? 'filled' : ''}"
+                x="0" y="9" width="32" height="30"
+                fill="rgba(249,115,22,0.8)"/>
+        </g>
+        <polygon class="glass-poly" points="2,4 30,4 27,39 5,39"/>
       </svg>
-      <div class="glass-body">
-        <div class="glass-water ${filled ? 'filled' : ''}"></div>
-      </div>
     </div>`;
   }
 
@@ -2314,22 +2304,22 @@ function wireGoalCard(card, goal, val) {
       // This keeps already-filled cups completely static (no re-animation).
       const cupsRow = card.querySelector(`#cups-${gid}`);
       cupsRow.querySelectorAll('.cup').forEach((cupEl, i) => {
-        const water      = cupEl.querySelector('.glass-water');
+        const rect       = cupEl.querySelector('.glass-water-rect');
         const shouldFill = i < newCups;
         const isFilled   = cupEl.classList.contains('filled');
         if (shouldFill && !isFilled) {
-          // Empty → filled: CSS transition plays naturally
+          // Empty → filled: SVG transform transition plays naturally
           cupEl.classList.add('filled');
-          water.classList.add('filled');
+          rect.classList.add('filled');
         } else if (!shouldFill && isFilled) {
           // Filled → empty: disable transition so it snaps instantly
-          water.style.transition = 'none';
-          water.classList.remove('filled');
+          rect.style.transition = 'none';
+          rect.classList.remove('filled');
           cupEl.classList.remove('filled');
           // Re-enable transition after the paint so future fills animate
-          requestAnimationFrame(() => { water.style.transition = ''; });
+          requestAnimationFrame(() => { rect.style.transition = ''; });
         }
-        // Already correct state → untouched, stays static
+        // Already correct state → untouched, stays completely static
       });
 
       // Update the count label and card complete class
