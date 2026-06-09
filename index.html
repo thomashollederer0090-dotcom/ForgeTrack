@@ -815,8 +815,8 @@
     /* Trapezoidal clip area — the "inside" of the glass */
     .glass-body {
       position: absolute;
-      top: 5px; left: 4px; right: 4px; bottom: 3px;
-      /* polygon matches SVG shape: full width at top, narrower at bottom */
+      top: 5px; left: 0; right: 0; bottom: 3px;
+      /* clip-path matches the SVG trapezoid outline */
       clip-path: polygon(0% 0%, 100% 0%, 83% 100%, 17% 100%);
       display: flex;
       align-items: flex-end;
