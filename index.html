@@ -2307,16 +2307,19 @@ function wireGoalCard(card, goal, val) {
         const rect       = cupEl.querySelector('.glass-water-rect');
         const shouldFill = i < newCups;
         const isFilled   = cupEl.classList.contains('filled');
+        const svg = cupEl.querySelector('svg');
         if (shouldFill && !isFilled) {
-          // Empty → filled: SVG transform transition plays naturally
+          // Empty → filled: let CSS rule apply the drop-shadow
+          svg.style.filter = '';
           cupEl.classList.add('filled');
           rect.classList.add('filled');
         } else if (!shouldFill && isFilled) {
-          // Filled → empty: disable transition so it snaps instantly
+          // Filled → empty: clear filter synchronously before removing class
+          // so the glow never lingers even for one frame
+          svg.style.filter = 'none';
           rect.style.transition = 'none';
           rect.classList.remove('filled');
           cupEl.classList.remove('filled');
-          // Re-enable transition after the paint so future fills animate
           requestAnimationFrame(() => { rect.style.transition = ''; });
         }
         // Already correct state → untouched, stays completely static
