@@ -2300,35 +2300,15 @@ function wireGoalCard(card, goal, val) {
       const newCups = Math.max(0, (idx < cur) ? idx : idx + 1);
       upsertTodayLog(gid, { cups: newCups });
 
-      // Targeted DOM update — only touch cups whose state actually changes.
-      // This keeps already-filled cups completely static (no re-animation).
-      const cupsRow = card.querySelector(`#cups-${gid}`);
-      cupsRow.querySelectorAll('.cup').forEach((cupEl, i) => {
-        const rect       = cupEl.querySelector('.glass-water-rect');
-        const shouldFill = i < newCups;
-        const isFilled   = cupEl.classList.contains('filled');
-        const svg = cupEl.querySelector('svg');
-        if (shouldFill && !isFilled) {
-          // Empty → filled: let CSS rule apply the drop-shadow
-          svg.style.filter = '';
-          cupEl.classList.add('filled');
-          rect.classList.add('filled');
-        } else if (!shouldFill && isFilled) {
-          // Filled → empty: clear filter synchronously before removing class
-          // so the glow never lingers even for one frame
-          svg.style.filter = 'none';
-          rect.style.transition = 'none';
-          rect.classList.remove('filled');
-          cupEl.classList.remove('filled');
-          requestAnimationFrame(() => { rect.style.transition = ''; });
-        }
-        // Already correct state → untouched, stays completely static
+      // Synchronously kill every SVG filter before the DOM is replaced.
+      // This prevents ghost glow on elements that are about to be discarded.
+      card.querySelectorAll(`#cups-${gid} svg`).forEach(svg => {
+        svg.style.filter = 'none';
       });
 
-      // Update the count label and card complete class
-      const lbl = card.querySelector('.progress-lbl');
-      if (lbl) lbl.textContent = `${newCups} / ${goal.target || 8} cups`;
-      updateCardComplete(card, newCups >= (goal.target || 8));
+      // Re-render on the next tick so the filter-clear above happens
+      // in the same JS frame before any new DOM is inserted.
+      requestAnimationFrame(() => renderGoals());
     });
   }
 
