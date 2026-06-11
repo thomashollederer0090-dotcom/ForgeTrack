@@ -226,6 +226,29 @@
     }
 
     .day-card.has-exercises { border-left: 3px solid var(--accent); }
+    .day-card.is-today { border-left: 3px solid #eab308; background: rgba(234,179,8,0.05); }
+    .day-card.completed-today { border-left: 3px solid #22c55e; background: rgba(34,197,94,0.05); }
+
+    .today-badge {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 20px;
+      margin-left: 8px;
+      background: rgba(234,179,8,0.15);
+      color: #eab308;
+      border: 1px solid rgba(234,179,8,0.35);
+      vertical-align: middle;
+    }
+
+    .today-badge.complete {
+      background: rgba(34,197,94,0.15);
+      color: #22c55e;
+      border-color: rgba(34,197,94,0.35);
+    }
 
     .day-card-body {
       flex: 1;
@@ -302,6 +325,8 @@
       transition: border-color var(--transition);
     }
 
+    .ex-card.logged-today { border-left: 3px solid #22c55e; background: rgba(34,197,94,0.05); }
+
     .ex-card-header {
       display: flex;
       align-items: flex-start;
@@ -323,6 +348,8 @@
       color: var(--text-secondary);
       margin-bottom: 10px;
     }
+
+    .ex-last.logged-today-text { color: #22c55e; }
 
     /* log form */
     .log-form {
@@ -394,6 +421,68 @@
     }
 
     .log-actions { display: flex; gap: 8px; }
+
+    /* session list (day view + history table inline rows) */
+    .session-list { margin-top: 4px; }
+
+    .session-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid #161616;
+    }
+
+    .session-row:last-child { border-bottom: none; }
+
+    .session-row-info { flex: 1; min-width: 0; }
+
+    .session-row-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+
+    .session-row-summary {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .session-row-notes {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .session-row-actions { display: flex; gap: 2px; flex-shrink: 0; }
+
+    /* inline delete confirmation */
+    .session-confirm-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 10px;
+      margin: 6px 0;
+      border: 1px solid var(--danger);
+      border-radius: var(--radius-input);
+      background: rgba(239,68,68,0.08);
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .session-confirm-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+    /* inline edit form */
+    .session-edit-form {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      padding: 10px;
+      margin: 6px 0;
+    }
 
     /* Add exercise section */
     .add-ex-section {
@@ -779,6 +868,34 @@
       line-height: 1;
     }
     .goal-drag-handle:active { cursor: grabbing; }
+
+    /* Streak badge (goal cards) */
+    .streak-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #1a0e00;
+      border: 1px solid #92400e;
+      border-radius: 8px;
+      padding: 6px 12px;
+      margin-top: 6px;
+      margin-bottom: 10px;
+    }
+    .streak-badge-flame { font-size: 14px; line-height: 1; }
+    .streak-badge-content { display: flex; flex-direction: column; gap: 2px; }
+    .streak-badge-text {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: #f97316;
+      line-height: 1;
+    }
+    .streak-badge-best {
+      font-family: 'Inter', sans-serif;
+      font-size: 9px;
+      color: #92400e;
+      line-height: 1.2;
+    }
 
     /* Water */
     .cups-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
@@ -1188,6 +1305,196 @@ function sortedSessions(ex) {
   return [...(ex.sessions||[])].sort((a,b) => a.date > b.date ? 1 : -1);
 }
 
+// ── Backwards-compatible field readers (reps/weight -> firstSetReps/firstSetWeight) ──
+function getFirstSetReps(s) {
+  return (s.firstSetReps !== undefined && s.firstSetReps !== null) ? s.firstSetReps : s.reps;
+}
+
+function getFirstSetWeight(s) {
+  return (s.firstSetWeight !== undefined && s.firstSetWeight !== null) ? s.firstSetWeight : s.weight;
+}
+
+function sessionSummaryText(s) {
+  return `${s.sets} sets · ${getFirstSetReps(s)} reps @ ${getFirstSetWeight(s)}${s.unit} (first set)`;
+}
+
+function hasSessionToday(ex) {
+  return (ex.sessions||[]).some(s => s.date === todayISO());
+}
+
+// ── Inline edit/delete UI state for individual sessions ──
+// Maps sessionId -> 'edit' | 'delete'. Never persisted.
+const sessionUIState = {};
+
+// Tracks which exercises' "Session History" / "Full History" panels are open. Never persisted.
+const dayHistOpen  = new Set();
+const progHistOpen = new Set();
+
+const ICON_EDIT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
+  <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+  <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+</svg>`;
+
+const ICON_TRASH = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
+  <polyline points="3,6 5,6 21,6"/>
+  <path d="M19,6l-1,14H6L5,6"/>
+  <path d="M10,11v6M14,11v6M9,6V4h6v2"/>
+</svg>`;
+
+function sessionConfirmHTML() {
+  return `
+    <div class="session-confirm-row">
+      <span>Delete this session?</span>
+      <div class="session-confirm-actions">
+        <button class="btn btn-sm btn-danger" data-confirm-del type="button">Confirm</button>
+        <button class="btn btn-sm" data-cancel-del type="button">Cancel</button>
+      </div>
+    </div>`;
+}
+
+function sessionEditFormHTML(s, idPrefix) {
+  const reps   = getFirstSetReps(s);
+  const weight = getFirstSetWeight(s);
+  const unit   = s.unit || 'kg';
+  return `
+    <div class="session-edit-form">
+      <div class="log-grid">
+        <div class="log-field">
+          <label>SETS</label>
+          <input type="number" id="${idPrefix}-sets" min="1" value="${s.sets}">
+        </div>
+        <div class="log-field">
+          <label>FIRST SET REPS</label>
+          <input type="number" id="${idPrefix}-reps" min="1" value="${reps}">
+        </div>
+        <div class="log-field">
+          <label>FIRST SET WEIGHT</label>
+          <input type="number" id="${idPrefix}-wt" min="0" step="0.5" value="${weight}">
+        </div>
+        <div class="unit-toggle">
+          <label>UNIT</label>
+          <div class="unit-btns" id="${idPrefix}-utg">
+            <button class="${unit==='kg'?'active':''}" data-u="kg" type="button">kg</button>
+            <button class="${unit==='lbs'?'active':''}" data-u="lbs" type="button">lbs</button>
+          </div>
+        </div>
+      </div>
+      <div class="log-notes">
+        <label>NOTES <span style="color:var(--text-muted)">(optional)</span></label>
+        <input type="text" id="${idPrefix}-notes" value="${escHtml(s.notes||'')}">
+      </div>
+      <div class="log-actions">
+        <button class="btn btn-sm" data-save-session type="button">Save</button>
+        <button class="btn btn-sm btn-danger" data-cancel-session type="button">Cancel</button>
+      </div>
+    </div>`;
+}
+
+function wireSessionConfirmRow(root, exId, sessionId, onDone) {
+  root.querySelector('[data-confirm-del]').addEventListener('click', () => {
+    deleteSession(exId, sessionId);
+    delete sessionUIState[sessionId];
+    onDone();
+  });
+  root.querySelector('[data-cancel-del]').addEventListener('click', () => {
+    delete sessionUIState[sessionId];
+    onDone();
+  });
+}
+
+function wireSessionEditForm(root, exId, s, idPrefix, onDone) {
+  const utg = root.querySelector(`#${idPrefix}-utg`);
+  utg.addEventListener('click', e => {
+    const u = e.target.dataset.u;
+    if (!u) return;
+    utg.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.u === u));
+  });
+
+  root.querySelector('[data-save-session]').addEventListener('click', () => {
+    const sets   = parseInt(document.getElementById(`${idPrefix}-sets`).value);
+    const reps   = parseInt(document.getElementById(`${idPrefix}-reps`).value);
+    const weight = parseFloat(document.getElementById(`${idPrefix}-wt`).value);
+    const notes  = document.getElementById(`${idPrefix}-notes`).value.trim();
+    const active = utg.querySelector('.active');
+    const unit   = active ? active.dataset.u : 'kg';
+
+    if (!sets || !reps || isNaN(weight)) {
+      [['sets',sets],['reps',reps],['wt',weight]].forEach(([f,val]) => {
+        if (!val && val !== 0) {
+          const el = document.getElementById(`${idPrefix}-${f}`);
+          el.style.borderColor = 'var(--danger)';
+          setTimeout(() => el.style.borderColor = '', 1500);
+        }
+      });
+      return;
+    }
+
+    updateSession(exId, s.id, { sets, firstSetReps: reps, firstSetWeight: weight, unit, notes });
+    delete sessionUIState[s.id];
+    onDone();
+  });
+
+  root.querySelector('[data-cancel-session]').addEventListener('click', () => {
+    delete sessionUIState[s.id];
+    onDone();
+  });
+}
+
+function updateSession(exId, sessionId, updates) {
+  const data = getData();
+  const ex   = findExById(data, exId);
+  if (!ex) return;
+  const s = (ex.sessions||[]).find(x => x.id === sessionId);
+  if (!s) return;
+  Object.assign(s, updates);
+  delete s.reps;
+  delete s.weight;
+  saveData(data);
+}
+
+// ── Session list rendering for Day View exercise cards ──
+function renderSessionListCard(ex, container) {
+  container.innerHTML = '';
+  const sess = [...(ex.sessions||[])].sort((a,b) => a.date > b.date ? -1 : 1);
+
+  sess.forEach(s => {
+    const item  = document.createElement('div');
+    const state = sessionUIState[s.id];
+
+    if (state === 'delete') {
+      item.innerHTML = sessionConfirmHTML();
+      container.appendChild(item);
+      wireSessionConfirmRow(item, ex.id, s.id, () => renderDay());
+    } else if (state === 'edit') {
+      const idPrefix = `de-${ex.id}-${s.id}`;
+      item.innerHTML = sessionEditFormHTML(s, idPrefix);
+      container.appendChild(item);
+      wireSessionEditForm(item, ex.id, s, idPrefix, () => renderDay());
+    } else {
+      item.className = 'session-row';
+      item.innerHTML = `
+        <div class="session-row-info">
+          <div class="session-row-date">${fmtDate(s.date)}</div>
+          <div class="session-row-summary">${escHtml(sessionSummaryText(s))}</div>
+          ${s.notes ? `<div class="session-row-notes">${escHtml(s.notes)}</div>` : ''}
+        </div>
+        <div class="session-row-actions">
+          <button class="btn-icon" data-edit-session="${s.id}" title="Edit session">${ICON_EDIT}</button>
+          <button class="btn-icon danger" data-del-session="${s.id}" title="Delete session">${ICON_TRASH}</button>
+        </div>`;
+      container.appendChild(item);
+      item.querySelector(`[data-edit-session="${s.id}"]`).addEventListener('click', () => {
+        sessionUIState[s.id] = 'edit';
+        renderDay();
+      });
+      item.querySelector(`[data-del-session="${s.id}"]`).addEventListener('click', () => {
+        sessionUIState[s.id] = 'delete';
+        renderDay();
+      });
+    }
+  });
+}
+
 // ════════════════════════════════════════════════════════════
 //  NAVIGATION
 // ════════════════════════════════════════════════════════════
@@ -1251,12 +1558,22 @@ function renderWeek() {
     const cnt = (day.exerciseIds||[]).length;
     const hasEx = cnt > 0;
 
+    const isToday = day.dayOfWeek === todayDOW();
+    const completedToday = isToday && (day.exerciseIds||[]).some(exId => {
+      const ex = findExById(data, exId);
+      return ex && hasSessionToday(ex);
+    });
+
     const card = document.createElement('div');
-    card.className = 'day-card' + (hasEx ? ' has-exercises' : '');
+    let cls = 'day-card';
+    if (hasEx) cls += ' has-exercises';
+    if (isToday) cls += ' is-today';
+    if (completedToday) cls += ' completed-today';
+    card.className = cls;
 
     card.innerHTML = `
       <div class="day-card-body" data-day-id="${day.id}">
-        <div class="day-dow">${day.dayOfWeek.toUpperCase()}</div>
+        <div class="day-dow">${day.dayOfWeek.toUpperCase()}${isToday ? `<span class="today-badge${completedToday ? ' complete' : ''}">Today</span>` : ''}</div>
         <div class="day-label-text">${day.label || '<span style="color:var(--text-muted)">—</span>'}</div>
         <div class="day-count">${hasEx ? `${cnt} exercise${cnt!==1?'s':''}` : 'No exercises'}</div>
       </div>
@@ -1270,7 +1587,7 @@ function renderWeek() {
             <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
           </svg>
         </button>
-        <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" width="14" height="14" style="flex-shrink:0;pointer-events:none;">
+        <svg id="chevron-${day.id}" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" width="14" height="14" style="flex-shrink:0;cursor:pointer;">
           <polyline points="9,18 15,12 9,6"/>
         </svg>
       </div>
@@ -1280,6 +1597,9 @@ function renderWeek() {
 
     // Navigate on body click
     card.querySelector('.day-card-body').addEventListener('click', () => navigateTo('day', day.id));
+
+    // Navigate on chevron click
+    card.querySelector(`#chevron-${day.id}`).addEventListener('click', () => navigateTo('day', day.id));
 
     // Edit button
     const editBtn = card.querySelector(`#edit-btn-${day.id}`);
@@ -1366,11 +1686,13 @@ function buildExCard(ex, data) {
 
   let lastText = 'No sessions logged yet';
   if (ls) {
-    lastText = `Last: ${fmtDate(ls.date)} · ${ls.sets}×${ls.reps} @ ${ls.weight}${ls.unit}`;
+    lastText = `Last: ${fmtDate(ls.date)} · ${sessionSummaryText(ls)}`;
   }
 
+  const loggedToday = hasSessionToday(ex);
+
   const card = document.createElement('div');
-  card.className = 'ex-card';
+  card.className = 'ex-card' + (loggedToday ? ' logged-today' : '');
   card.id = `exc-${ex.id}`;
   card.draggable = true;
 
@@ -1386,10 +1708,20 @@ function buildExCard(ex, data) {
         </svg>
       </button>
     </div>
-    <div class="ex-last">${escHtml(lastText)}</div>
+    <div class="ex-last${loggedToday ? ' logged-today-text' : ''}">${escHtml(lastText)}</div>
     <div>
-      <button class="btn btn-sm" data-log="${ex.id}">Log Session</button>
+      ${loggedToday
+        ? `<span style="color:var(--text-muted);font-size:12px;">Already logged today</span>`
+        : `<button class="btn btn-sm" data-log="${ex.id}">Log Session</button>`}
+      ${(ex.sessions && ex.sessions.length) ? `
+      <button class="hist-toggle" id="stbtn-${ex.id}" style="margin-left:10px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+          <polyline points="6,9 12,15 18,9"/>
+        </svg>
+        Session History (${ex.sessions.length})
+      </button>` : ''}
     </div>
+    <div class="session-list hist-wrap" id="slist-${ex.id}"></div>
     <div class="log-form" id="lf-${ex.id}">
       <div class="log-grid">
         <div class="log-field">
@@ -1397,12 +1729,12 @@ function buildExCard(ex, data) {
           <input type="number" id="lf-sets-${ex.id}" min="1" value="${ls?ls.sets:3}" placeholder="3">
         </div>
         <div class="log-field">
-          <label>REPS</label>
-          <input type="number" id="lf-reps-${ex.id}" min="1" value="${ls?ls.reps:10}" placeholder="10">
+          <label>FIRST SET REPS</label>
+          <input type="number" id="lf-reps-${ex.id}" min="1" value="${ls?getFirstSetReps(ls):10}" placeholder="10">
         </div>
         <div class="log-field">
-          <label>WEIGHT</label>
-          <input type="number" id="lf-wt-${ex.id}" min="0" step="0.5" value="${ls?ls.weight:''}" placeholder="0">
+          <label>FIRST SET WEIGHT</label>
+          <input type="number" id="lf-wt-${ex.id}" min="0" step="0.5" value="${ls?getFirstSetWeight(ls):''}" placeholder="0">
         </div>
         <div class="unit-toggle">
           <label>UNIT</label>
@@ -1447,9 +1779,12 @@ function buildExCard(ex, data) {
   });
 
   // Log toggle
-  card.querySelector(`[data-log="${ex.id}"]`).addEventListener('click', () => {
-    document.getElementById(`lf-${ex.id}`).classList.toggle('open');
-  });
+  const logBtn = card.querySelector(`[data-log="${ex.id}"]`);
+  if (logBtn) {
+    logBtn.addEventListener('click', () => {
+      document.getElementById(`lf-${ex.id}`).classList.toggle('open');
+    });
+  }
 
   // Cancel
   card.querySelector(`[data-cancel="${ex.id}"]`).addEventListener('click', () => {
@@ -1465,6 +1800,23 @@ function buildExCard(ex, data) {
 
   // Save session
   card.querySelector(`[data-save="${ex.id}"]`).addEventListener('click', () => saveSession(ex.id));
+
+  // Session history toggle
+  const stbtn = card.querySelector(`#stbtn-${ex.id}`);
+  const slist = card.querySelector(`#slist-${ex.id}`);
+  if (stbtn) {
+    if (dayHistOpen.has(ex.id)) {
+      slist.classList.add('open');
+      stbtn.classList.add('open');
+    }
+    stbtn.addEventListener('click', () => {
+      slist.classList.toggle('open');
+      stbtn.classList.toggle('open');
+      if (slist.classList.contains('open')) dayHistOpen.add(ex.id);
+      else dayHistOpen.delete(ex.id);
+    });
+  }
+  renderSessionListCard(ex, slist);
 
   return card;
 }
@@ -1492,7 +1844,7 @@ function saveSession(exId) {
   if (!ex) return;
 
   if (!ex.sessions) ex.sessions = [];
-  ex.sessions.push({ id: crypto.randomUUID(), date: todayISO(), sets, reps, weight, unit, notes });
+  ex.sessions.push({ id: crypto.randomUUID(), date: todayISO(), sets, firstSetReps: reps, firstSetWeight: weight, unit, notes });
   saveData(data);
   renderDay();
 }
@@ -1658,7 +2010,7 @@ function renderProgress() {
     if (sortBy === 'gain') {
       const gainOf = ex => {
         const s = sortedSessions(ex);
-        return s.length >= 2 ? s[s.length-1].weight - s[0].weight : -Infinity;
+        return s.length >= 2 ? getFirstSetWeight(s[s.length-1]) - getFirstSetWeight(s[0]) : -Infinity;
       };
       return gainOf(b) - gainOf(a);
     }
@@ -1693,21 +2045,21 @@ function renderProgress() {
       journeyHTML = `
         <div class="journey-entry">
           <div class="journey-date">${fmtDate(first.date)}</div>
-          <div class="journey-val">${first.sets}×${first.reps} @ ${first.weight}${first.unit}</div>
+          <div class="journey-val">${first.sets}×${getFirstSetReps(first)} @ ${getFirstSetWeight(first)}${first.unit}</div>
         </div>`;
     } else {
-      const delta = last.weight - first.weight;
+      const delta = getFirstSetWeight(last) - getFirstSetWeight(first);
       const dCls  = delta > 0 ? 'delta-pos' : delta < 0 ? 'delta-neg' : 'delta-neu';
       const dTxt  = delta > 0 ? `+${delta}${last.unit}` : delta < 0 ? `${delta}${last.unit}` : '=';
       journeyHTML = `
         <div class="journey-entry">
           <div class="journey-date">${fmtDate(first.date)}</div>
-          <div class="journey-val">${first.sets}×${first.reps} @ ${first.weight}${first.unit}</div>
+          <div class="journey-val">${first.sets}×${getFirstSetReps(first)} @ ${getFirstSetWeight(first)}${first.unit}</div>
         </div>
         <div class="journey-arrow">→</div>
         <div class="journey-entry">
           <div class="journey-date">${fmtDate(last.date)}</div>
-          <div class="journey-val">${last.sets}×${last.reps} @ ${last.weight}${last.unit}</div>
+          <div class="journey-val">${last.sets}×${getFirstSetReps(last)} @ ${getFirstSetWeight(last)}${last.unit}</div>
         </div>
         <div class="journey-delta ${dCls}">${dTxt}</div>`;
     }
@@ -1774,32 +2126,59 @@ function renderProgress() {
     // Populate history table (newest first)
     const tbody = document.getElementById(`hb-${ex.id}`);
     [...sess].reverse().forEach(s => {
+      const state = sessionUIState[s.id];
       const tr = document.createElement('tr');
+
+      if (state === 'delete') {
+        tr.innerHTML = `<td colspan="6">${sessionConfirmHTML()}</td>`;
+        tbody.appendChild(tr);
+        wireSessionConfirmRow(tr, ex.id, s.id, () => renderProgress());
+        return;
+      }
+
+      if (state === 'edit') {
+        const idPrefix = `pe-${ex.id}-${s.id}`;
+        tr.innerHTML = `<td colspan="6">${sessionEditFormHTML(s, idPrefix)}</td>`;
+        tbody.appendChild(tr);
+        wireSessionEditForm(tr, ex.id, s, idPrefix, () => renderProgress());
+        return;
+      }
+
       tr.innerHTML = `
         <td>${fmtDate(s.date)}</td>
         <td>${s.sets}</td>
-        <td>${s.reps}</td>
-        <td>${s.weight}${s.unit}</td>
+        <td>${getFirstSetReps(s)}</td>
+        <td>${getFirstSetWeight(s)}${s.unit}</td>
         <td class="notes-cell">${escHtml(s.notes||'')}</td>
         <td>
-          <button class="btn-icon danger" title="Delete session" data-dex="${ex.id}" data-ds="${s.id}">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
-              <polyline points="3,6 5,6 21,6"/>
-              <path d="M19,6l-1,14H6L5,6"/>
-              <path d="M10,11v6M14,11v6M9,6V4h6v2"/>
-            </svg>
-          </button>
+          <div class="session-row-actions">
+            <button class="btn-icon" title="Edit session" data-edit-session="${s.id}">${ICON_EDIT}</button>
+            <button class="btn-icon danger" title="Delete session" data-del-session="${s.id}">${ICON_TRASH}</button>
+          </div>
         </td>`;
-      tr.querySelector(`[data-ds="${s.id}"]`).addEventListener('click', () => deleteSession(ex.id, s.id));
+      tr.querySelector(`[data-edit-session="${s.id}"]`).addEventListener('click', () => {
+        sessionUIState[s.id] = 'edit';
+        renderProgress();
+      });
+      tr.querySelector(`[data-del-session="${s.id}"]`).addEventListener('click', () => {
+        sessionUIState[s.id] = 'delete';
+        renderProgress();
+      });
       tbody.appendChild(tr);
     });
 
     // History toggle
     const htbtn = document.getElementById(`htbtn-${ex.id}`);
     const hw    = document.getElementById(`hw-${ex.id}`);
+    if (progHistOpen.has(ex.id)) {
+      hw.classList.add('open');
+      htbtn.classList.add('open');
+    }
     htbtn.addEventListener('click', () => {
       hw.classList.toggle('open');
       htbtn.classList.toggle('open');
+      if (hw.classList.contains('open')) progHistOpen.add(ex.id);
+      else progHistOpen.delete(ex.id);
     });
 
     // Render chart
@@ -1812,7 +2191,7 @@ function renderProgress() {
           data: {
             labels: sess.map(s => fmtDate(s.date)),
             datasets: [{
-              data: sess.map(s => s.weight),
+              data: sess.map(s => getFirstSetWeight(s)),
               borderColor: '#f97316',
               backgroundColor: 'rgba(249,115,22,0.08)',
               pointBackgroundColor: '#f97316',
@@ -1864,7 +2243,6 @@ function deleteSession(exId, sessionId) {
   if (!ex) return;
   ex.sessions = (ex.sessions||[]).filter(s => s.id !== sessionId);
   saveData(data);
-  renderProgress();
 }
 
 function removeExerciseGlobal(exId, exName) {
@@ -2046,6 +2424,25 @@ document.getElementById('gcf-save-btn').addEventListener('click', () => {
   renderGoals();
 });
 
+// ── Streak badge (goal cards) ─────────────────────────────
+function buildStreakBadge(goalId) {
+  const info   = calcStreakInfo(goalId);
+  const streak = info.current;
+  if (streak < 1) return '';
+
+  const label = streak === 1 ? '1 day' : `${streak} day streak`;
+  const best  = streak >= 7 ? `<div class="streak-badge-best">🏆 Best keep it going!</div>` : '';
+
+  return `
+    <div class="streak-badge">
+      <span class="streak-badge-flame">🔥</span>
+      <div class="streak-badge-content">
+        <span class="streak-badge-text">${label}</span>
+        ${best}
+      </div>
+    </div>`;
+}
+
 // ── Goal card builders ────────────────────────────────────
 function buildGoalCard(goal, todayLog) {
   const val = todayLog[goal.id];
@@ -2084,7 +2481,7 @@ function buildGoalCard(goal, todayLog) {
     case 'custom':     body = buildCustomBody(goal, val); break;
   }
 
-  card.innerHTML = header + body;
+  card.innerHTML = header + buildStreakBadge(goal.id) + body;
 
   // Delete goal
   card.querySelector(`[data-rmgoal="${goal.id}"]`).addEventListener('click', () => {
