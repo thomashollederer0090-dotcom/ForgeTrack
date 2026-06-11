@@ -949,10 +949,72 @@
     .progress-bar-fill.complete { background: var(--success); }
     .progress-lbl { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); }
 
+    /* Water — ml / bottle info lines */
+    .water-info-line { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #555; margin-top: 2px; }
+
     /* Steps */
     .steps-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
     .steps-row input { flex: 1; }
     .steps-row .step-unit { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+
+    /* Movement (steps goal type) */
+    .movement-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .movement-row input { flex: 1; }
+    .movement-row-label { font-size: 12px; color: var(--text-muted); white-space: nowrap; min-width: 110px; }
+    .movement-row + .progress-lbl { margin-bottom: 8px; }
+
+    .movement-section { }
+    .movement-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .movement-section-title { font-size: 13px; color: var(--text-primary); }
+    .movement-section-value { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); }
+    .movement-progress-wrap {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #1e1e1e;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .movement-progress-fill {
+      height: 100%;
+      background: #f97316;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+      max-width: 100%;
+    }
+    .movement-section input { width: 100%; }
+    .movement-divider { border-top: 1px solid #1e1e1e; margin: 14px 0; }
+    .movement-complete-badge {
+      font-size: 11px;
+      color: var(--success);
+      font-weight: 600;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .goal-complete-msg {
+      font-size: 11px;
+      color: var(--success);
+      font-weight: 600;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .cal-est-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0a0a0a;
+      border: 1px solid #1e1e1e;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-top: 8px;
+    }
+    .cal-est-label { font-size: 11px; color: var(--text-muted); }
+    .cal-est-value { font-family: 'JetBrains Mono', monospace; color: var(--accent); font-weight: 600; }
 
     /* Ring (meditation / study) */
     .ring-wrap { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
@@ -962,25 +1024,7 @@
     .ring-sub { font-size: 11px; color: var(--text-muted); }
     .add-mins-row { display: flex; gap: 6px; }
     .add-mins-row button { flex: 1; }
-
-    /* Macros */
-    .macro-bars { margin-bottom: 10px; }
-    .macro-bar-row { margin-bottom: 6px; }
-    .macro-bar-label-row {
-      display: flex; justify-content: space-between;
-      font-size: 11px; margin-bottom: 3px;
-    }
-    .macro-bar-name { color: var(--text-secondary); font-weight: 500; }
-    .macro-bar-val { font-family: 'JetBrains Mono', monospace; color: var(--text-muted); }
-    .macro-inputs-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-    .macro-input-col label {
-      display: block;
-      font-size: 10px;
-      color: var(--text-muted);
-      letter-spacing: 1px;
-      margin-bottom: 4px;
-      text-transform: uppercase;
-    }
+    .add-mins-row + .add-mins-row { margin-top: 6px; }
 
     /* Custom */
     .custom-done-btn {
@@ -1060,6 +1104,10 @@
     .goal-type-icon { font-size: 22px; margin-bottom: 5px; }
     .goal-type-label { font-size: 11px; color: var(--text-secondary); font-weight: 500; }
 
+    .goal-type-card.disabled { opacity: 0.35; cursor: not-allowed; }
+    .goal-type-card.disabled:hover { border-color: var(--border); background: #0d0d0d; }
+    .goal-type-added-label { font-size: 9px; color: var(--text-muted); margin-top: 3px; letter-spacing: 1px; text-transform: uppercase; }
+
     .goal-config-form { display: none; border-top: 1px solid var(--border); padding-top: 16px; }
     .goal-config-form.show { display: block; }
     .gcf-field { margin-bottom: 14px; }
@@ -1075,6 +1123,18 @@
     .gcf-grid label { font-size: 10px; color: var(--text-muted); letter-spacing: 1px; display: block; margin-bottom: 4px; text-transform: uppercase; }
     .modal-actions { display: flex; gap: 8px; margin-top: 20px; }
     .modal-actions .btn { flex: 1; text-align: center; }
+
+    /* shared recommendation hint (Add Goal modal + inline goal config edit) */
+    .field-hint { font-size: 11px; color: #555; font-style: italic; margin-top: 4px; }
+
+    /* CHANGE 2: inline goal config edit form */
+    .goal-edit-form { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    .goal-edit-form.open { max-height: 600px; }
+    .goal-edit-inner { padding-top: 4px; padding-bottom: 12px; }
+    .goal-edit-actions { display: flex; gap: 8px; margin-top: 4px; }
+    .goal-edit-actions .btn { flex: 1; text-align: center; }
+    .btn-muted { border-color: var(--border); color: var(--text-muted); }
+    .btn-muted:hover { background: rgba(255,255,255,0.04); }
 
     /* Streak */
     .streak-section { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border); }
@@ -1187,10 +1247,9 @@
     </div>
     <div class="goal-type-grid" id="goal-type-grid">
       <div class="goal-type-card" data-type="water"><div class="goal-type-icon">💧</div><div class="goal-type-label">Water</div></div>
-      <div class="goal-type-card" data-type="steps"><div class="goal-type-icon">👟</div><div class="goal-type-label">Steps</div></div>
+      <div class="goal-type-card" data-type="steps"><div class="goal-type-icon">🏃</div><div class="goal-type-label">Movement</div></div>
       <div class="goal-type-card" data-type="meditation"><div class="goal-type-icon">🧘</div><div class="goal-type-label">Meditation</div></div>
       <div class="goal-type-card" data-type="study"><div class="goal-type-icon">📚</div><div class="goal-type-label">Study</div></div>
-      <div class="goal-type-card" data-type="macros"><div class="goal-type-icon">🥗</div><div class="goal-type-label">Macros</div></div>
       <div class="goal-type-card" data-type="custom"><div class="goal-type-icon">✅</div><div class="goal-type-label">Custom</div></div>
     </div>
     <div class="goal-config-form" id="goal-config-form">
@@ -2273,6 +2332,22 @@ function saveGoals(g)         { localStorage.setItem(GOALS_KEY, JSON.stringify(g
 function getGoalLogs()        { return JSON.parse(localStorage.getItem(GOALS_LOG_KEY) || '{}'); }
 function saveGoalLogs(l)      { localStorage.setItem(GOALS_LOG_KEY, JSON.stringify(l)); }
 
+// Macros goal type has been removed — silently purge any leftover macros
+// goals (and their per-day log entries) from localStorage on startup.
+function purgeMacrosGoals() {
+  const goals = getGoals();
+  const macrosIds = new Set(goals.filter(g => g.type === 'macros').map(g => g.id));
+  if (macrosIds.size === 0) return;
+
+  saveGoals(goals.filter(g => !macrosIds.has(g.id)));
+
+  const logs = getGoalLogs();
+  Object.keys(logs).forEach(date => {
+    macrosIds.forEach(id => delete logs[date][id]);
+  });
+  saveGoalLogs(logs);
+}
+
 function getTodayLog() {
   const logs = getGoalLogs();
   return logs[todayISO()] || {};
@@ -2293,18 +2368,28 @@ function checkDailyReset() {
   if (!logs[today]) { logs[today] = {}; saveGoalLogs(logs); }
 }
 
+// ── Movement (steps goal) target helper — backwards compatible ──
+function getMovementTargets(goal) {
+  return {
+    stepsTarget:   goal.stepsTarget   ?? goal.target ?? 10000,
+    flightsTarget: goal.flightsTarget ?? 10,
+    liftingTarget: goal.liftingTarget ?? 45
+  };
+}
+
 // ── Streak calculation ────────────────────────────────────
 function isGoalComplete(goal, val) {
   if (val === undefined || val === null) return false;
   switch (goal.type) {
     case 'water':      return (val.cups      || 0) >= (goal.target || 8);
-    case 'steps':      return (val.steps     || 0) >= (goal.target || 10000);
+    case 'steps': {
+      const mt = getMovementTargets(goal);
+      return (val.steps          || 0) >= mt.stepsTarget
+          && (val.flights        || 0) >= mt.flightsTarget
+          && (val.liftingMinutes || 0) >= mt.liftingTarget;
+    }
     case 'meditation': return (val.minutes   || 0) >= (goal.target || 10);
     case 'study':      return (val.minutes   || 0) >= (goal.target || 30);
-    case 'macros':
-      return (val.protein || 0) >= (goal.protein || 0) &&
-             (val.carbs   || 0) >= (goal.carbs   || 0) &&
-             (val.fat     || 0) >= (goal.fat     || 0);
     case 'custom':     return val.done === true;
     default:           return false;
   }
@@ -2348,24 +2433,47 @@ let selectedGoalType = null;
 
 const GOAL_TYPES = {
   water:      { icon: '💧', label: 'Water' },
-  steps:      { icon: '👟', label: 'Steps' },
+  steps:      { icon: '🏃', label: 'Movement' },
   meditation: { icon: '🧘', label: 'Meditation' },
   study:      { icon: '📚', label: 'Study' },
-  macros:     { icon: '🥗', label: 'Macros' },
   custom:     { icon: '✅', label: 'Custom' }
 };
 
+// ── Recommendation hints (shown in Add Goal modal + inline goal config edit) ──
+const FIELD_HINTS = {
+  waterTarget:      'Recommended: 8 cups (approx. 2L) per day for adults',
+  stepsTarget:      'Recommended: 10,000 steps/day for general health',
+  flightsTarget:    'Recommended: 10 flights/day for cardiovascular benefit',
+  liftingTarget:    'Recommended: 45–60 min resistance training per session',
+  meditationTarget: 'Recommended: 10–20 min/day shown to reduce stress',
+  studyTarget:      'Recommended: 25–50 min focused sessions (Pomodoro method)'
+};
+
+function hintHTML(key) {
+  return FIELD_HINTS[key] ? `<div class="field-hint">${FIELD_HINTS[key]}</div>` : '';
+}
+
+// ── Water ml/bottle preview helper (CHANGE 1) ─────────────
+function waterPreviewText(cups) {
+  const ml = cups * 250;
+  const bottles = cups / 2;
+  const bottlesStr = Number.isInteger(bottles) ? `${bottles} bottles` : `${bottles.toFixed(1)} bottles`;
+  return `= ${ml}ml · = ${bottlesStr}`;
+}
+
+function updateWaterPreview(input, previewId) {
+  const cups = parseInt(input.value) || 0;
+  const el = document.getElementById(previewId);
+  if (el) el.textContent = waterPreviewText(cups);
+}
+
 const EXTRA_FIELDS = {
-  water:      `<div class="gcf-field"><label>Daily Target (cups)</label><input type="number" class="goal-num" id="gcf-target" min="1" max="30" value="8"></div>`,
-  steps:      `<div class="gcf-field"><label>Daily Target (steps)</label><input type="number" class="goal-num" id="gcf-target" min="100" value="10000"></div>`,
-  meditation: `<div class="gcf-field"><label>Daily Target (minutes)</label><input type="number" class="goal-num" id="gcf-target" min="1" value="10"></div>`,
-  study:      `<div class="gcf-field"><label>Daily Target (minutes)</label><input type="number" class="goal-num" id="gcf-target" min="1" value="30"></div>`,
-  macros:     `<div class="gcf-field"><label>Daily Macro Targets (g)</label>
-                 <div class="gcf-grid">
-                   <div><label>PROTEIN</label><input type="number" class="goal-num" id="gcf-protein" min="0" value="150"></div>
-                   <div><label>CARBS</label><input type="number" class="goal-num" id="gcf-carbs" min="0" value="200"></div>
-                   <div><label>FAT</label><input type="number" class="goal-num" id="gcf-fat" min="0" value="60"></div>
-                 </div></div>`,
+  water:      `<div class="gcf-field"><label>Daily Target (cups)</label><input type="number" class="goal-num" id="gcf-target" min="1" max="30" value="8" oninput="updateWaterPreview(this,'gcf-water-preview')">${hintHTML('waterTarget')}<div class="field-hint" id="gcf-water-preview">${waterPreviewText(8)}</div></div>`,
+  steps:      `<div class="gcf-field"><label>Step Goal</label><input type="number" class="goal-num" id="gcf-steps-target" min="100" value="10000">${hintHTML('stepsTarget')}</div>
+               <div class="gcf-field"><label>Flights Goal</label><input type="number" class="goal-num" id="gcf-flights-target" min="1" value="10">${hintHTML('flightsTarget')}</div>
+               <div class="gcf-field"><label>Weightlifting Goal</label><input type="number" class="goal-num" id="gcf-lifting-target" min="1" value="45">${hintHTML('liftingTarget')}</div>`,
+  meditation: `<div class="gcf-field"><label>Daily Target (minutes)</label><input type="number" class="goal-num" id="gcf-target" min="1" value="10">${hintHTML('meditationTarget')}</div>`,
+  study:      `<div class="gcf-field"><label>Daily Target (minutes)</label><input type="number" class="goal-num" id="gcf-target" min="1" value="30">${hintHTML('studyTarget')}</div>`,
   custom:     ''
 };
 
@@ -2374,7 +2482,28 @@ function openGoalModal() {
   document.getElementById('goal-config-form').classList.remove('show');
   document.getElementById('gcf-name').value = '';
   document.getElementById('gcf-extra').innerHTML = '';
-  document.querySelectorAll('.goal-type-card').forEach(c => c.classList.remove('selected'));
+
+  // CHANGE 1 — disable goal types that already exist (custom is exempt)
+  const existingTypes = new Set(getGoals().map(g => g.type));
+  document.querySelectorAll('.goal-type-card').forEach(c => {
+    c.classList.remove('selected');
+    const type     = c.dataset.type;
+    const isAdded  = type !== 'custom' && existingTypes.has(type);
+    c.classList.toggle('disabled', isAdded);
+
+    let lbl = c.querySelector('.goal-type-added-label');
+    if (isAdded) {
+      if (!lbl) {
+        lbl = document.createElement('div');
+        lbl.className = 'goal-type-added-label';
+        lbl.textContent = 'Added';
+        c.appendChild(lbl);
+      }
+    } else if (lbl) {
+      lbl.remove();
+    }
+  });
+
   document.getElementById('goal-modal').classList.add('open');
 }
 
@@ -2392,6 +2521,7 @@ document.getElementById('goal-modal').addEventListener('click', e => {
 
 document.querySelectorAll('.goal-type-card').forEach(card => {
   card.addEventListener('click', () => {
+    if (card.classList.contains('disabled')) return;
     document.querySelectorAll('.goal-type-card').forEach(c => c.classList.remove('selected'));
     card.classList.add('selected');
     selectedGoalType = card.dataset.type;
@@ -2409,10 +2539,10 @@ document.getElementById('gcf-save-btn').addEventListener('click', () => {
 
   const goal = { id: crypto.randomUUID(), type: selectedGoalType, name };
 
-  if (selectedGoalType === 'macros') {
-    goal.protein = parseInt(document.getElementById('gcf-protein')?.value) || 0;
-    goal.carbs   = parseInt(document.getElementById('gcf-carbs')?.value) || 0;
-    goal.fat     = parseInt(document.getElementById('gcf-fat')?.value) || 0;
+  if (selectedGoalType === 'steps') {
+    goal.stepsTarget   = parseInt(document.getElementById('gcf-steps-target')?.value) || 10000;
+    goal.flightsTarget = parseInt(document.getElementById('gcf-flights-target')?.value) || 10;
+    goal.liftingTarget = parseInt(document.getElementById('gcf-lifting-target')?.value) || 45;
   } else if (selectedGoalType !== 'custom') {
     goal.target = parseInt(document.getElementById('gcf-target')?.value) || 0;
   }
@@ -2443,6 +2573,115 @@ function buildStreakBadge(goalId) {
     </div>`;
 }
 
+// ── Inline goal config editing (CHANGE 2) ─────────────────
+function gefField(id, label, type, value, hintKey) {
+  return `<div class="gcf-field">
+    <label>${label}</label>
+    <input type="${type}" id="${id}" value="${escHtml(String(value === undefined || value === null ? '' : value))}">
+    ${hintKey ? hintHTML(hintKey) : ''}
+  </div>`;
+}
+
+function buildGoalEditFormHTML(goal) {
+  let fields = '';
+
+  switch (goal.type) {
+    case 'water': {
+      const cupsVal = goal.target ?? 8;
+      fields = `<div class="gcf-field">
+        <label>Target cups</label>
+        <input type="number" id="gef-target-${goal.id}" value="${escHtml(String(cupsVal))}" oninput="updateWaterPreview(this,'gef-water-preview-${goal.id}')">
+        ${hintHTML('waterTarget')}
+        <div class="field-hint" id="gef-water-preview-${goal.id}">${waterPreviewText(cupsVal)}</div>
+      </div>`;
+      break;
+    }
+    case 'steps': {
+      const mt = getMovementTargets(goal);
+      fields = gefField(`gef-stepstarget-${goal.id}`, 'Step Goal', 'number', mt.stepsTarget, 'stepsTarget')
+             + gefField(`gef-flightstarget-${goal.id}`, 'Flights Goal', 'number', mt.flightsTarget, 'flightsTarget')
+             + gefField(`gef-liftingtarget-${goal.id}`, 'Weightlifting Goal', 'number', mt.liftingTarget, 'liftingTarget');
+      break;
+    }
+    case 'meditation':
+      fields = gefField(`gef-target-${goal.id}`, 'Target minutes', 'number', goal.target ?? 10, 'meditationTarget');
+      break;
+    case 'study':
+      fields = gefField(`gef-target-${goal.id}`, 'Target minutes', 'number', goal.target ?? 30, 'studyTarget')
+             + gefField(`gef-subject-${goal.id}`, 'Subject', 'text', goal.subject ?? '');
+      break;
+    case 'custom':
+      fields = gefField(`gef-name-${goal.id}`, 'Label', 'text', goal.name ?? '')
+             + gefField(`gef-desc-${goal.id}`, 'Description', 'text', goal.description ?? '')
+             + gefField(`gef-customtarget-${goal.id}`, 'Target value', 'number', goal.customTarget ?? 0)
+             + gefField(`gef-unit-${goal.id}`, 'Unit', 'text', goal.unit ?? '');
+      break;
+  }
+
+  return `
+    <div class="goal-edit-form" id="gef-${goal.id}">
+      <div class="goal-edit-inner">
+        ${fields}
+        <div class="goal-edit-actions">
+          <button class="btn btn-sm" data-savegoal="${goal.id}">Save</button>
+          <button class="btn btn-sm btn-muted" data-cancelgoal="${goal.id}">Cancel</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function toggleGoalEditForm(goalId) {
+  const target = document.getElementById(`gef-${goalId}`);
+  if (!target) return;
+  const willOpen = !target.classList.contains('open');
+
+  // Only one edit form open at a time
+  document.querySelectorAll('.goal-edit-form.open').forEach(el => el.classList.remove('open'));
+
+  if (willOpen) target.classList.add('open');
+}
+
+function wireGoalEditForm(card, goal) {
+  const form = card.querySelector(`#gef-${goal.id}`);
+  if (!form) return;
+
+  form.querySelector(`[data-cancelgoal="${goal.id}"]`).addEventListener('click', () => {
+    form.classList.remove('open');
+  });
+
+  form.querySelector(`[data-savegoal="${goal.id}"]`).addEventListener('click', () => {
+    const goals = getGoals();
+    const g = goals.find(x => x.id === goal.id);
+    if (!g) return;
+
+    switch (g.type) {
+      case 'water':
+      case 'meditation':
+        g.target = parseInt(document.getElementById(`gef-target-${goal.id}`).value) || 0;
+        break;
+      case 'steps':
+        g.stepsTarget   = parseInt(document.getElementById(`gef-stepstarget-${goal.id}`).value) || 10000;
+        g.flightsTarget = parseInt(document.getElementById(`gef-flightstarget-${goal.id}`).value) || 10;
+        g.liftingTarget = parseInt(document.getElementById(`gef-liftingtarget-${goal.id}`).value) || 45;
+        delete g.target;
+        break;
+      case 'study':
+        g.target  = parseInt(document.getElementById(`gef-target-${goal.id}`).value) || 0;
+        g.subject = document.getElementById(`gef-subject-${goal.id}`).value.trim();
+        break;
+      case 'custom':
+        g.name         = document.getElementById(`gef-name-${goal.id}`).value.trim() || g.name;
+        g.description  = document.getElementById(`gef-desc-${goal.id}`).value.trim();
+        g.customTarget = parseInt(document.getElementById(`gef-customtarget-${goal.id}`).value) || 0;
+        g.unit         = document.getElementById(`gef-unit-${goal.id}`).value.trim();
+        break;
+    }
+
+    saveGoals(goals);
+    renderGoals();
+  });
+}
+
 // ── Goal card builders ────────────────────────────────────
 function buildGoalCard(goal, todayLog) {
   const val = todayLog[goal.id];
@@ -2461,6 +2700,9 @@ function buildGoalCard(goal, todayLog) {
         <div class="goal-type-badge">${typeInfo.label}</div>
       </div>
       <div class="goal-card-actions">
+        <button class="btn-icon" data-editgoal="${goal.id}" title="Edit goal settings">
+          ${ICON_EDIT}
+        </button>
         <button class="btn-icon danger" data-rmgoal="${goal.id}" title="Delete goal">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
             <polyline points="3,6 5,6 21,6"/>
@@ -2471,17 +2713,18 @@ function buildGoalCard(goal, todayLog) {
       </div>
     </div>`;
 
+  const editForm = buildGoalEditFormHTML(goal);
+
   let body = '';
   switch (goal.type) {
     case 'water':      body = buildWaterBody(goal, val); break;
     case 'steps':      body = buildStepsBody(goal, val); break;
     case 'meditation':
     case 'study':      body = buildRingBody(goal, val); break;
-    case 'macros':     body = buildMacrosBody(goal, val); break;
     case 'custom':     body = buildCustomBody(goal, val); break;
   }
 
-  card.innerHTML = header + buildStreakBadge(goal.id) + body;
+  card.innerHTML = header + editForm + buildStreakBadge(goal.id) + body;
 
   // Delete goal
   card.querySelector(`[data-rmgoal="${goal.id}"]`).addEventListener('click', () => {
@@ -2491,6 +2734,12 @@ function buildGoalCard(goal, todayLog) {
       renderGoals();
     }
   });
+
+  // Edit goal settings (inline config form)
+  card.querySelector(`[data-editgoal="${goal.id}"]`).addEventListener('click', () => {
+    toggleGoalEditForm(goal.id);
+  });
+  wireGoalEditForm(card, goal);
 
   // Goal-specific event wiring
   wireGoalCard(card, goal, val);
@@ -2561,20 +2810,53 @@ function buildWaterBody(goal, val) {
   let cupsHTML = '';
   for (let i = 0; i < target; i++) cupsHTML += glassCup(i, i < cups);
 
+  const ml = cups * 250;
+  const bottles = cups / 2;
+  const bottlesStr = Number.isInteger(bottles) ? `${bottles} bottles` : `${bottles.toFixed(1)} bottles`;
+  const complete = cups >= target;
+
   return `<div class="cups-row" id="cups-${goal.id}">${cupsHTML}</div>
-    <div class="progress-lbl">${cups} / ${target} cups</div>`;
+    <div class="progress-lbl">${cups} / ${target} cups</div>
+    <div class="water-info-line">${cups} cups = ${ml}ml</div>
+    <div class="water-info-line">${cups} cups = ${bottlesStr}</div>
+    ${complete ? '<div class="goal-complete-msg">✓ Goal Complete</div>' : ''}`;
 }
 
-// STEPS
-function buildStepsBody(goal, val) {
-  const steps = (val && val.steps) || 0;
-  const target = goal.target || 10000;
+// STEPS (Movement)
+function movementSectionHTML(icon, label, value, target, unit, idBase) {
+  const p = pct(value, target);
   return `
-    <div class="steps-row">
-      <input type="number" class="goal-num" id="steps-inp-${goal.id}" value="${steps}" min="0" placeholder="0">
-      <span class="step-unit">/ ${target.toLocaleString()} steps</span>
-    </div>
-    ${progressBarHTML(steps, target)}`;
+    <div class="movement-section">
+      <div class="movement-section-header">
+        <span class="movement-section-title">${icon} ${label}</span>
+        <span class="movement-section-value" id="${idBase}-lbl">${value} / ${target} ${unit}</span>
+      </div>
+      <div class="movement-progress-wrap">
+        <div class="movement-progress-fill" id="${idBase}-fill" style="width:${p}%"></div>
+      </div>
+      <input type="number" class="goal-num" id="${idBase}" value="${value}" min="0" placeholder="0">
+    </div>`;
+}
+
+function buildStepsBody(goal, val) {
+  const steps   = (val && val.steps) || 0;
+  const flights = (val && val.flights) || 0;
+  const lifting = (val && val.liftingMinutes) || 0;
+  const mt = getMovementTargets(goal);
+  const calories = Math.round(steps * 0.04 + flights * 8 + lifting * 5);
+  const allDone = steps >= mt.stepsTarget && flights >= mt.flightsTarget && lifting >= mt.liftingTarget;
+
+  return `
+    ${movementSectionHTML('👟', 'Steps', steps, mt.stepsTarget, 'steps', `steps-inp-${goal.id}`)}
+    <div class="movement-divider"></div>
+    ${movementSectionHTML('🏃', 'Flights Climbed', flights, mt.flightsTarget, 'flights', `flights-inp-${goal.id}`)}
+    <div class="movement-divider"></div>
+    ${movementSectionHTML('🏋️', 'Weightlifting', lifting, mt.liftingTarget, 'min', `lifting-inp-${goal.id}`)}
+    ${allDone ? `<div class="movement-complete-badge">✓ Goal Complete</div>` : ''}
+    <div class="cal-est-card">
+      <span class="cal-est-label">~ Est. Calories Burned</span>
+      <span class="cal-est-value" id="cal-est-${goal.id}">~${calories} kcal</span>
+    </div>`;
 }
 
 // RING (meditation / study)
@@ -2605,39 +2887,11 @@ function buildRingBody(goal, val) {
       <button class="btn btn-sm" data-add="5">+5 min</button>
       <button class="btn btn-sm" data-add="10">+10 min</button>
       <button class="btn btn-sm" data-add="15">+15 min</button>
-    </div>`;
-}
-
-// MACROS
-function buildMacrosBody(goal, val) {
-  const protein = (val && val.protein) || 0;
-  const carbs   = (val && val.carbs)   || 0;
-  const fat     = (val && val.fat)     || 0;
-
-  function macroBar(label, cur, target) {
-    const p = pct(cur, target);
-    const done = p >= 100;
-    return `<div class="macro-bar-row">
-      <div class="macro-bar-label-row">
-        <span class="macro-bar-name">${label}</span>
-        <span class="macro-bar-val">${cur} / ${target}g</span>
-      </div>
-      <div class="progress-bar-wrap">
-        <div class="progress-bar-fill ${done?'complete':''}" style="width:${p}%"></div>
-      </div>
-    </div>`;
-  }
-
-  return `
-    <div class="macro-bars">
-      ${macroBar('Protein', protein, goal.protein||0)}
-      ${macroBar('Carbs',   carbs,   goal.carbs  ||0)}
-      ${macroBar('Fat',     fat,     goal.fat    ||0)}
     </div>
-    <div class="macro-inputs-grid" id="macro-grid-${goal.id}">
-      <div class="macro-input-col"><label>PROTEIN (g)</label><input type="number" class="goal-num" id="mac-p-${goal.id}" min="0" value="${protein}"></div>
-      <div class="macro-input-col"><label>CARBS (g)</label><input type="number" class="goal-num" id="mac-c-${goal.id}" min="0" value="${carbs}"></div>
-      <div class="macro-input-col"><label>FAT (g)</label><input type="number" class="goal-num" id="mac-f-${goal.id}" min="0" value="${fat}"></div>
+    <div class="add-mins-row" id="mins-rm-btns-${goal.id}">
+      <button class="btn btn-sm btn-danger" data-rm="5">−5 min</button>
+      <button class="btn btn-sm btn-danger" data-rm="10">−10 min</button>
+      <button class="btn btn-sm btn-danger" data-rm="15">−15 min</button>
     </div>`;
 }
 
@@ -2654,32 +2908,39 @@ function updateCardComplete(card, complete) {
   card.classList.toggle('complete', complete);
 }
 
-function updateStepsVisuals(card, goal, steps) {
-  const target = goal.target || 10000;
-  const p = Math.min(100, Math.round((steps / target) * 100));
-  const done = steps >= target;
-  const fill = card.querySelector('.progress-bar-fill');
-  const lbl  = card.querySelector('.progress-lbl');
-  if (fill) { fill.style.width = p + '%'; fill.classList.toggle('complete', done); }
-  if (lbl)  lbl.textContent = `${steps} / ${target}`;
-  updateCardComplete(card, done);
-}
-
-function updateMacroVisuals(card, goal, vals) {
-  const targets = { protein: goal.protein||0, carbs: goal.carbs||0, fat: goal.fat||0 };
-  const keys    = ['protein','carbs','fat'];
-  const fills   = card.querySelectorAll('.progress-bar-fill');
-  const lbls    = card.querySelectorAll('.macro-bar-val');
-  keys.forEach((k, i) => {
-    const cur = vals[k] || 0;
-    const tgt = targets[k];
-    const p   = tgt ? Math.min(100, Math.round((cur / tgt) * 100)) : 0;
-    const done = cur >= tgt;
-    if (fills[i]) { fills[i].style.width = p + '%'; fills[i].classList.toggle('complete', done); }
-    if (lbls[i])  lbls[i].textContent = `${cur} / ${tgt}g`;
+// ── Movement (steps goal type) targeted visual update ─────
+function updateMovementVisuals(card, goal, steps, flights, lifting) {
+  const mt = getMovementTargets(goal);
+  const sections = [
+    { idBase: `steps-inp-${goal.id}`,   val: steps,   target: mt.stepsTarget,   unit: 'steps' },
+    { idBase: `flights-inp-${goal.id}`, val: flights, target: mt.flightsTarget, unit: 'flights' },
+    { idBase: `lifting-inp-${goal.id}`, val: lifting, target: mt.liftingTarget, unit: 'min' }
+  ];
+  sections.forEach(s => {
+    const p = pct(s.val, s.target);
+    const fill = card.querySelector(`#${s.idBase}-fill`);
+    const lbl  = card.querySelector(`#${s.idBase}-lbl`);
+    if (fill) fill.style.width = p + '%';
+    if (lbl)  lbl.textContent = `${s.val} / ${s.target} ${s.unit}`;
   });
-  const allDone = vals.protein >= targets.protein && vals.carbs >= targets.carbs && vals.fat >= targets.fat;
+
+  const calories = Math.round(steps * 0.04 + flights * 8 + lifting * 5);
+  const calEl = card.querySelector(`#cal-est-${goal.id}`);
+  if (calEl) calEl.textContent = `~${calories} kcal`;
+
+  const allDone = steps >= mt.stepsTarget && flights >= mt.flightsTarget && lifting >= mt.liftingTarget;
   updateCardComplete(card, allDone);
+
+  let badge = card.querySelector('.movement-complete-badge');
+  const calCard = card.querySelector('.cal-est-card');
+  if (allDone && !badge) {
+    badge = document.createElement('div');
+    badge.className = 'movement-complete-badge';
+    badge.textContent = '✓ Goal Complete';
+    if (calCard) calCard.parentNode.insertBefore(badge, calCard);
+  } else if (!allDone && badge) {
+    badge.remove();
+  }
 }
 
 // ── Wire interactive elements ─────────────────────────────
@@ -2710,14 +2971,23 @@ function wireGoalCard(card, goal, val) {
   }
 
   if (goal.type === 'steps') {
-    const inp = card.querySelector(`#steps-inp-${gid}`);
-    inp && inp.addEventListener('input', () => {
-      clearTimeout(debounceTimers[gid]);
-      debounceTimers[gid] = setTimeout(() => {
-        const steps = parseInt(inp.value) || 0;
-        upsertTodayLog(gid, { steps });
-        updateStepsVisuals(card, goal, steps);
-      }, 500);
+    const stepsInp   = card.querySelector(`#steps-inp-${gid}`);
+    const flightsInp = card.querySelector(`#flights-inp-${gid}`);
+    const liftingInp = card.querySelector(`#lifting-inp-${gid}`);
+
+    const recalc = () => {
+      const steps   = parseInt(stepsInp.value) || 0;
+      const flights = parseInt(flightsInp.value) || 0;
+      const lifting = parseInt(liftingInp.value) || 0;
+      upsertTodayLog(gid, { steps, flights, liftingMinutes: lifting });
+      updateMovementVisuals(card, goal, steps, flights, lifting);
+    };
+
+    [stepsInp, flightsInp, liftingInp].forEach(inp => {
+      inp && inp.addEventListener('input', () => {
+        clearTimeout(debounceTimers[gid]);
+        debounceTimers[gid] = setTimeout(recalc, 500);
+      });
     });
   }
 
@@ -2729,23 +2999,13 @@ function wireGoalCard(card, goal, val) {
       upsertTodayLog(gid, { minutes: cur + add });
       renderGoals();
     });
-  }
 
-  if (goal.type === 'macros') {
-    ['p','c','f'].forEach(k => {
-      const inp = card.querySelector(`#mac-${k}-${gid}`);
-      inp && inp.addEventListener('input', () => {
-        clearTimeout(debounceTimers[gid + k]);
-        debounceTimers[gid + k] = setTimeout(() => {
-          const vals = {
-            protein: parseInt(card.querySelector(`#mac-p-${gid}`)?.value) || 0,
-            carbs:   parseInt(card.querySelector(`#mac-c-${gid}`)?.value) || 0,
-            fat:     parseInt(card.querySelector(`#mac-f-${gid}`)?.value) || 0
-          };
-          upsertTodayLog(gid, vals);
-          updateMacroVisuals(card, goal, vals);
-        }, 500);
-      });
+    card.querySelector(`#mins-rm-btns-${gid}`).addEventListener('click', e => {
+      const rm = parseInt(e.target.dataset.rm);
+      if (!rm) return;
+      const cur = (getTodayLog()[gid] || {}).minutes || 0;
+      upsertTodayLog(gid, { minutes: Math.max(0, cur - rm) });
+      renderGoals();
     });
   }
 
@@ -2831,6 +3091,7 @@ function renderGoals() {
 //  BOOT
 // ════════════════════════════════════════════════════════════
 initData();
+purgeMacrosGoals();
 renderWeek();
 </script>
 </body>
